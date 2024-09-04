@@ -31,7 +31,7 @@ export default function Home() {
           <FAQSection />
           <section>
             Follow us on social media at{" "}
-            <a href="https://x.com/)skarSchlemmer" target="blank">
+            <a href="https://x.com/OskarSchlemmer" target="blank">
               @OskarSchlemmer
             </a>{" "}
             and{" "}
