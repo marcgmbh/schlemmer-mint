@@ -33,6 +33,37 @@ export function MintButton() {
   const [txHash, setTxHash] = useState("");
   const [freeMintCount, setFreeMintCount] = useState(0);
   const [ethBalance, setEthBalance] = useState("0");
+  const [isMainnet, setIsMainnet] = useState(false);
+
+  const checkNetwork = async () => {
+    if (typeof window.ethereum !== "undefined") {
+      try {
+        const chainId = await window.ethereum.request({
+          method: "eth_chainId",
+        });
+        const mainnetChainId = "0x1"; // Ethereum Mainnet
+        setIsMainnet(chainId === mainnetChainId);
+
+        if (chainId !== mainnetChainId) {
+          try {
+            await window.ethereum.request({
+              method: "wallet_switchEthereumChain",
+              params: [{ chainId: mainnetChainId }],
+            });
+            setIsMainnet(true);
+          } catch (switchError: any) {
+            if (switchError.code === 4902) {
+              console.error("Mainnet not added to user's wallet");
+            } else {
+              console.error("Failed to switch to Mainnet", switchError);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error checking network:", error);
+      }
+    }
+  };
 
   const checkWalletConnection = useCallback(async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -46,6 +77,7 @@ export function MintButton() {
           fetchMintCounts(accounts[0]);
           checkFreeMintEligibility(accounts[0]);
           fetchEthBalance(accounts[0]);
+          await checkNetwork();
         }
       } catch (error) {
         console.error("Error checking wallet connection:", error);
@@ -55,6 +87,13 @@ export function MintButton() {
 
   useEffect(() => {
     checkWalletConnection();
+
+    if (typeof window.ethereum !== "undefined") {
+      window.ethereum.on("chainChanged", checkNetwork);
+      return () => {
+        window.ethereum.removeListener("chainChanged", checkNetwork);
+      };
+    }
   }, [checkWalletConnection]);
 
   const connectWallet = async () => {
@@ -68,6 +107,7 @@ export function MintButton() {
         fetchMintCounts(accounts[0]);
         checkFreeMintEligibility(accounts[0]);
         fetchEthBalance(accounts[0]);
+        await checkNetwork();
       } catch (error) {
         console.error("Error connecting wallet:", error);
       }
@@ -184,6 +224,10 @@ export function MintButton() {
         >
           Connect Wallet
         </Button>
+      ) : !isMainnet ? (
+        <div className="text-red-500 text-center">
+          Please switch to Ethereum Mainnet
+        </div>
       ) : (
         <>
           {mintSuccess ? (
