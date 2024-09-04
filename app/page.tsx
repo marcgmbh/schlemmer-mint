@@ -35,8 +35,8 @@ export default function Home() {
                   The Oskar Schlemmer Theatre Archives:
                 </h3>
                 <p className="text-base md:text-lg">
-                  Dedicated to preserving and promoting Schlemmer's legacy, the
-                  archives maintain his works and support the study of his
+                  Dedicated to preserving and promoting Schlemmer&apos;s legacy,
+                  the archives maintain his works and support the study of his
                   contributions to art and design.
                 </p>
               </div>
@@ -53,13 +53,6 @@ export default function Home() {
           </section>
         </div>
       </main>
-
-      <footer className="w-full pl-4 md:pl-12 py-8 text-left text-sm text-white/50">
-        © 2024 C. Raman Schlemmer ® All Rights Reserved.
-        <a href="#" className="ml-2 text-blue-600 hover:text-blue-800">
-          Imprint
-        </a>
-      </footer>
     </div>
   );
 }

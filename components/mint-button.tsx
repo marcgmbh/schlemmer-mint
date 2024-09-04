@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ethers } from "ethers";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import contractABI from "/public/Bauhaus.json";
+import contractABI from "./Bauhaus.json";
 
 const contractAddress = "0x76A661fB20CE0de0B527eA8CfD1074FF11Dc1ECb";
 
