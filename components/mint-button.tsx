@@ -187,22 +187,13 @@ export function MintButton() {
                 >
                   View on Etherscan
                 </a>
-                {/* <span>|</span>
-                <a
-                  href={`https://opensea.io/assets/${contractAddress}/`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#FFDF12] hover:underline"
-                >
-                  View on OpenSea
-                </a> */}
                 <span>|</span>
-                <p
-                  className="text-[#FFDF12] hover:underline"
+                <span
+                  className="text-[#FFDF12] hover:underline cursor-pointer"
                   onClick={resetMintState}
                 >
                   Mint Again
-                </p>
+                </span>
               </div>
             </div>
           ) : (

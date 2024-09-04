@@ -20,8 +20,9 @@ function FAQSection() {
             When will the NFTs be available for minting? Is there a roadmap?
           </summary>
           <p className="mt-2">
-            The NFTs will be available for minting on September 4, 2024. There
-            is no roadmap. Utility? This is art.
+            The NFTs will be available for minting on September 4, 2024.
+            <br />
+            There is no roadmap. Utility? This is art.
           </p>
         </details>
         <details className="p-4 rounded-lg">
@@ -29,20 +30,15 @@ function FAQSection() {
             How many NFTs can I mint?
           </summary>
           <p className="mt-2">
-            Public Mint has a limit of 10. NFT Collectors can mint 3, for half
-            price. Each wallet can mint These limits are to ensure fair
-            distribution among collectors.
+            Public Mint has a limit of 10. WL mints are max 1. These limits are
+            to ensure fair distribution among collectors.
           </p>
         </details>
         <details className="p-4 rounded-lg">
           <summary className="cursor-pointer">
             What are the pricing tiers for the NFTs?
           </summary>
-          <p className="mt-2">
-            0.06685 ETH for collectors of select NFTs (see list)
-            <br />
-            0.1337 ETH for public.
-          </p>
+          <p className="mt-2">0.0888 ETH for public.</p>
         </details>
         <details className="p-4 rounded-lg">
           <summary className="cursor-pointer">
@@ -88,6 +84,15 @@ function FAQSection() {
           </p>
         </details>
         <details className="p-4 rounded-lg">
+          <summary className="cursor-pointer">Wen Reveal?</summary>
+          <p className="mt-2">
+            The Smart Contract has a commit-reveal scheme (similar to Checks VV)
+            whereby the reveal happens after the next person mints, or after ~32
+            blocks on Ethereum. Be patient, reload metadata. Enjoy the art -
+            don’t worry, it will persist forever.
+          </p>
+        </details>
+        <details className="p-4 rounded-lg">
           <summary className="cursor-pointer">
             What rights do I have when I purchase an NFT?
           </summary>
@@ -98,30 +103,12 @@ function FAQSection() {
           </p>
         </details>
         <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">
-            How can I stay updated on the launch?
-          </summary>
-          <p className="mt-2">
-            Follow us on social media at @OskarSchlemmer and @one33seven for the
-            latest updates and announcements.
-          </p>
-        </details>
-        <details className="p-4 rounded-lg">
           <summary className="cursor-pointer">Legal Note</summary>
           <p className="mt-2">
             The Bauhaus emblem is in the public domain, but the trademark rights
             are owned by C. Raman Schlemmer. Each NFT provides a non-exclusive,
             personal use license for the digital artwork, with all intellectual
             property rights retained by the trademark holders.
-          </p>
-        </details>
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">
-            Who can I contact for further inquiries?
-          </summary>
-          <p className="mt-2">
-            For additional questions, please reach out to us at
-            dimitria@one33seven.com
           </p>
         </details>
       </div>
