@@ -7,7 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import contractABI from "./BauhausSignet.json";
 import allowlist from "./allowlist.json";
 
-const contractAddress = "0xFA683dDa59f7d43a4EFff6C177590370D69E6d30";
+const contractAddress = "0x2fB65031a2269dE88Ca6109Cfce61b3Cc58B7012";
 
 declare global {
   interface Window {
@@ -113,7 +113,7 @@ export function MintButton() {
           ] as string[];
           if (!tokens || tokens.length === 0)
             throw new Error("Not eligible for free mint");
-          tx = await contract.mintFree(tokens[0]); // Assuming you need the first token
+          tx = await contract.mintFree(tokens[0]);
         } else {
           const value = ethers.utils.parseEther(
             (0.0888 * mintCount).toString()
@@ -187,15 +187,15 @@ export function MintButton() {
                 >
                   View on Etherscan
                 </a>
-                <span>|</span>
+                {/* <span>|</span>
                 <a
-                  href={`https://opensea.io/assets/${contractAddress}`}
+                  href={`https://opensea.io/assets/${contractAddress}/`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[#FFDF12] hover:underline"
                 >
                   View on OpenSea
-                </a>
+                </a> */}
                 <span>|</span>
                 <p
                   className="text-[#FFDF12] hover:underline"
