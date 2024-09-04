@@ -2,7 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import { MintButton } from "@/components/mint-button";
 import HeroTitle from "@/components/hero-title";
 import HeroImage from "@/components/hero-image";
-import HeroDescription from "@/components/hero-description";
+// import HeroDescription from "@/components/hero-description";
 import FAQSection from "@/components/faq-section";
 
 function HeroSection() {
@@ -10,7 +10,7 @@ function HeroSection() {
     <div className="flex flex-col items-center justify-center min-h-screen text-center px-4">
       <HeroTitle />
       <HeroImage />
-      <HeroDescription />
+      {/* <HeroDescription /> */}
       <MintButton />
     </div>
   );
