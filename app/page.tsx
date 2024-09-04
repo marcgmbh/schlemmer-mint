@@ -29,9 +29,26 @@ export default function Home() {
 
         <div className="w-full max-w-3xl px-4 py-16">
           <FAQSection />
-
           <section>
-            <h2 className="text-3xl md:text-2xl mb-4">About</h2>
+            Follow us on social media at{" "}
+            <a href="@OskarSchlemmer" target="blank">
+              @OskarSchlemmer
+            </a>{" "}
+            and{" "}
+            <a href="@one33seven" target="blank">
+              @one33seven
+            </a>{" "}
+            for the latest updates and announcements.
+            <br />
+            <br />
+            Sign the Petition to Save the Studio For Future Generation:
+            <br />
+            <a href="@OskarSchlemmer" target="blank">
+              https://www.change.org/p/save-the-oskar-schlemmer-studio-for-future-generations-313bb710-4a95-4cb7-9dbf-8523c3871c32
+            </a>
+          </section>
+          <section>
+            <h2 className="text-3xl mt-8 md:text-2xl mb-4">About</h2>
             <div className="space-y-4">
               <div>
                 <h3 className="text-xl md:text-xl mb-2">

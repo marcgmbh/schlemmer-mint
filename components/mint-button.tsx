@@ -32,6 +32,7 @@ export function MintButton() {
   const [mintSuccess, setMintSuccess] = useState(false);
   const [txHash, setTxHash] = useState("");
   const [freeMintCount, setFreeMintCount] = useState(0);
+  const [ethBalance, setEthBalance] = useState("0");
 
   const checkWalletConnection = useCallback(async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -44,6 +45,7 @@ export function MintButton() {
           setWalletAddress(accounts[0]);
           fetchMintCounts(accounts[0]);
           checkFreeMintEligibility(accounts[0]);
+          fetchEthBalance(accounts[0]);
         }
       } catch (error) {
         console.error("Error checking wallet connection:", error);
@@ -65,10 +67,10 @@ export function MintButton() {
         setWalletAddress(accounts[0]);
         fetchMintCounts(accounts[0]);
         checkFreeMintEligibility(accounts[0]);
+        fetchEthBalance(accounts[0]);
       } catch (error) {
         console.error("Error connecting wallet:", error);
       }
-    } else {
     }
   };
 
@@ -86,6 +88,14 @@ export function MintButton() {
 
       const freeCount = await contract.getMintCountFree(address);
       setFreeMintCount(freeCount.toNumber());
+    }
+  };
+
+  const fetchEthBalance = async (address: string) => {
+    if (typeof window.ethereum !== "undefined") {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const balance = await provider.getBalance(address);
+      setEthBalance(ethers.utils.formatEther(balance));
     }
   };
 
@@ -161,6 +171,9 @@ export function MintButton() {
     setStatus("Mint");
   };
 
+  const totalPrice = 0.0888 * mintCount;
+  const hasEnoughEth = parseFloat(ethBalance) >= totalPrice;
+
   return (
     <div className="space-y-4 w-full max-w-md">
       {!isWalletConnected ? (
@@ -213,13 +226,22 @@ export function MintButton() {
                     variant="default"
                     className="w-full h-20 text-lg"
                     onClick={() => mint(false)}
-                    disabled={isMinting || publicMintCount >= 10}
+                    disabled={
+                      isMinting || publicMintCount >= 10 || !hasEnoughEth
+                    }
                   >
-                    {publicMintCount >= 10 ? "Limit Reached" : status}
+                    {publicMintCount >= 10
+                      ? "Limit Reached"
+                      : `Mint (${totalPrice.toFixed(4)} ETH)`}
                   </Button>
                   {publicMintCount >= 10 && (
                     <div className="text-red-500 text-sm">
                       Sorry, only 10 NFTs per wallet
+                    </div>
+                  )}
+                  {!hasEnoughEth && (
+                    <div className="text-red-500 text-sm">
+                      Not enough ETH to mint
                     </div>
                   )}
                   <Slider
