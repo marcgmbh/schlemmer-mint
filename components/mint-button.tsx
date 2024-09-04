@@ -16,7 +16,8 @@ declare global {
 }
 
 interface Allowlist {
-  [key: string]: string;
+  [key: string]: string[] | string;
+  merkleTreeRoot: string;
 }
 
 export function MintButton() {
@@ -107,9 +108,12 @@ export function MintButton() {
 
         let tx;
         if (isFree) {
-          const token = (allowlist as Allowlist)[walletAddress.toLowerCase()];
-          if (!token) throw new Error("Not eligible for free mint");
-          tx = await contract.mintFree(token);
+          const tokens = (allowlist as Allowlist)[
+            walletAddress.toLowerCase()
+          ] as string[];
+          if (!tokens || tokens.length === 0)
+            throw new Error("Not eligible for free mint");
+          tx = await contract.mintFree(tokens[0]); // Assuming you need the first token
         } else {
           const value = ethers.utils.parseEther(
             (0.0888 * mintCount).toString()
