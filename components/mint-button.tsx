@@ -113,7 +113,7 @@ export function MintButton() {
           ] as string[];
           if (!tokens || tokens.length === 0)
             throw new Error("Not eligible for free mint");
-          tx = await contract.mintFree(tokens[0]);
+          tx = await contract.mintFree(tokens);
         } else {
           const value = ethers.utils.parseEther(
             (0.0888 * mintCount).toString()
