@@ -30,6 +30,7 @@ export function MintButton() {
   const [walletAddress, setWalletAddress] = useState("");
   const [mintSuccess, setMintSuccess] = useState(false);
   const [txHash, setTxHash] = useState("");
+  const [freeMintCount, setFreeMintCount] = useState(0);
 
   const checkWalletConnection = useCallback(async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -81,6 +82,9 @@ export function MintButton() {
 
       const publicCount = await contract.getMintCountPublic(address);
       setPublicMintCount(publicCount.toNumber());
+
+      const freeCount = await contract.getMintCountFree(address);
+      setFreeMintCount(freeCount.toNumber());
     }
   };
 
@@ -198,47 +202,48 @@ export function MintButton() {
               </div>
             </div>
           ) : (
-            <Button
-              variant="default"
-              className="w-full h-20 text-lg"
-              onClick={() => mint(false)}
-              disabled={isMinting || publicMintCount >= 10}
-            >
-              {publicMintCount >= 10 ? "Limit Reached" : status}
-            </Button>
-          )}
-          {publicMintCount >= 10 && (
-            <div className="text-red-500 text-sm">
-              Sorry, only 10 NFTs per wallet
-            </div>
-          )}
-          {isFreeMintEligible && (
-            <Button
-              variant="secondary"
-              className="w-full h-20 text-lg"
-              onClick={() => mint(true)}
-              disabled={isMinting || isMintingFree}
-            >
-              {isMintingFree ? "Minting Free..." : "Mint Free NFT"}
-            </Button>
-          )}
-          {!mintSuccess && (
             <>
-              <Slider
-                min={1}
-                max={10 - publicMintCount}
-                step={1}
-                value={[mintCount]}
-                onValueChange={(value) => setMintCount(value[0])}
-                className="w-full"
-                disabled={publicMintCount >= 10}
-              />
-              <div className="text-center">
-                {mintCount} {mintCount > 1 ? "" : ""}
-              </div>
-              <div className="text-sm text-gray-500">
-                You minted: {publicMintCount} / 10
-              </div>
+              {isFreeMintEligible && freeMintCount === 0 ? (
+                <Button
+                  variant="secondary"
+                  className="w-full h-20 text-lg"
+                  onClick={() => mint(true)}
+                  disabled={isMinting || isMintingFree}
+                >
+                  {isMintingFree ? "Minting..." : "Mint Free NFT"}
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    variant="default"
+                    className="w-full h-20 text-lg"
+                    onClick={() => mint(false)}
+                    disabled={isMinting || publicMintCount >= 10}
+                  >
+                    {publicMintCount >= 10 ? "Limit Reached" : status}
+                  </Button>
+                  {publicMintCount >= 10 && (
+                    <div className="text-red-500 text-sm">
+                      Sorry, only 10 NFTs per wallet
+                    </div>
+                  )}
+                  <Slider
+                    min={1}
+                    max={10 - publicMintCount}
+                    step={1}
+                    value={[mintCount]}
+                    onValueChange={(value) => setMintCount(value[0])}
+                    className="w-full"
+                    disabled={publicMintCount >= 10}
+                  />
+                  <div className="text-center">
+                    {mintCount} {mintCount > 1 ? "" : ""}
+                  </div>
+                  <div className="text-sm text-gray-500">
+                    You minted: {publicMintCount} / 10
+                  </div>
+                </>
+              )}
             </>
           )}
         </>

@@ -5,6 +5,7 @@ import HeroImage from "@/components/hero-image";
 import HeroDescription from "@/components/hero-description";
 import FAQSection from "@/components/faq-section";
 import Link from "next/link";
+import Footer from "@/components/footer";
 
 function HeroSection() {
   return (
@@ -20,7 +21,7 @@ function HeroSection() {
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
-      <Link href="https://www.schlemmer.org/imprint">
+      <Link href="https://www.schlemmer.org/" className="hidden md:block">
         <ArrowLeft className="w-6 h-6 absolute top-8 left-8 text-gray-300 hover:text-gray-800 cursor-pointer" />
       </Link>
       <main className="flex-grow flex flex-col items-center">
@@ -53,6 +54,7 @@ export default function Home() {
           </section>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
