@@ -31,11 +31,11 @@ export default function Home() {
           <FAQSection />
           <section>
             Follow us on social media at{" "}
-            <a href="@OskarSchlemmer" target="blank">
+            <a href="https://x.com/)skarSchlemmer" target="blank">
               @OskarSchlemmer
             </a>{" "}
             and{" "}
-            <a href="@one33seven" target="blank">
+            <a href="https://x.com/one33seven" target="blank">
               @one33seven
             </a>{" "}
             for the latest updates and announcements.
@@ -43,7 +43,10 @@ export default function Home() {
             <br />
             Sign the Petition to Save the Studio For Future Generation:
             <br />
-            <a href="@OskarSchlemmer" target="blank">
+            <a
+              href="  https://www.change.org/p/save-the-oskar-schlemmer-studio-for-future-generations-313bb710-4a95-4cb7-9dbf-8523c3871c32"
+              target="blank"
+            >
               https://www.change.org/p/save-the-oskar-schlemmer-studio-for-future-generations-313bb710-4a95-4cb7-9dbf-8523c3871c32
             </a>
           </section>
