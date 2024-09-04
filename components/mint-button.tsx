@@ -218,7 +218,7 @@ export function MintButton() {
                   onClick={() => mint(true)}
                   disabled={isMinting || isMintingFree}
                 >
-                  {isMintingFree ? "Minting..." : "Mint Free NFT"}
+                  {isMintingFree ? "Minting..." : "Mint Free"}
                 </Button>
               ) : (
                 <>
