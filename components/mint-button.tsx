@@ -8,6 +8,12 @@ import contractABI from "./Bauhaus.json";
 
 const contractAddress = "0x76A661fB20CE0de0B527eA8CfD1074FF11Dc1ECb";
 
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
+
 export function MintButton() {
   const [isMinting, setIsMinting] = useState(false);
   const [mintCount, setMintCount] = useState(1);
@@ -41,7 +47,7 @@ export function MintButton() {
       } else {
         setStatus("Please install MetaMask");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error minting NFT:", error);
 
       if (error.code === "INSUFFICIENT_FUNDS") {
