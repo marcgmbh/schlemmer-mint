@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bauhaus Signet Test</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+            max-width: 800px;
+        }
+        h1 {
+            margin-bottom: 40px;
+        }
+        .signet-container {
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .controls {
+            margin-top: 40px;
+        }
+        button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bauhaus Signet Test</h1>
+        
+        <div class="signet-container">
+            <!-- The SVG with a basic red/white/blue Bauhaus style -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1337 1337">
+                <defs>
+                    <linearGradient id="GoldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#FFD700"/>
+                        <stop offset="45%" stop-color="#FFFEC1"/>
+                        <stop offset="55%" stop-color="#FFFEC1"/>
+                        <stop offset="100%" stop-color="#E4C200"/>
+                    </linearGradient>
+                </defs>
+                
+                <!-- Background circle -->
+                <circle cx="668.5" cy="668.5" r="628" fill="black" />
+                
+                <!-- Signet parts -->
+                <g id="headGroup">
+                    <path d="M592.85 1147.5h146.83v147.25H592.85z" id="Neck" fill="#E53935" />
+                    <path d="M792.68 810.36v345.25H502.1v-15.24h234.64V964.74h-58.31v-25.59h58.31V810.36z" id="Mouth" fill="#FFFFFF" />
+                    <path d="M819.52 807.07v8.53H680.53v-8.53h105.43l.28-753.56 33 7z" id="Nose" fill="#E53935" />
+                    <path d="M647.25 255.71v317.7h-10.63v-119.7H445.89V266.34H330.22v-10.63z" id="Eye" fill="#1E88E5" />
+                </g>
+                
+                <!-- Circle border -->
+                <circle cx="668.5" cy="668.5" r="628" stroke-width="10" stroke="#FDD835" fill="none" />
+            </svg>
+        </div>
+        
+        <div class="controls">
+            <p>This is a static test of the Bauhaus Signet SVG rendering.</p>
+            <button onclick="window.location.reload()">Refresh Page</button>
+        </div>
+    </div>
+</body>
+</html> 

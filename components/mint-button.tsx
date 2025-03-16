@@ -1,314 +1,116 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { ethers } from "ethers";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
-import contractABI from "./BauhausSignet.json";
-import allowlist from "./allowlist.json";
-
-const contractAddress = "0x2fB65031a2269dE88Ca6109Cfce61b3Cc58B7012";
-
-declare global {
-  interface Window {
-    ethereum?: any;
-  }
-}
-
-interface Allowlist {
-  [key: string]: string[] | string;
-  merkleTreeRoot: string;
-}
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function MintButton() {
-  const [isMinting, setIsMinting] = useState(false);
-  const [mintCount, setMintCount] = useState(1);
-  const [status, setStatus] = useState("Mint");
-  const [publicMintCount, setPublicMintCount] = useState(0);
-  const [isFreeMintEligible, setIsFreeMintEligible] = useState(false);
-  const [isMintingFree, setIsMintingFree] = useState(false);
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState("");
-  const [mintSuccess, setMintSuccess] = useState(false);
-  const [txHash, setTxHash] = useState("");
-  const [freeMintCount, setFreeMintCount] = useState(0);
-  const [ethBalance, setEthBalance] = useState("0");
-  const [isMainnet, setIsMainnet] = useState(false);
-
-  const checkNetwork = async () => {
-    if (typeof window.ethereum !== "undefined") {
-      try {
-        const chainId = await window.ethereum.request({
-          method: "eth_chainId",
-        });
-        const mainnetChainId = "0x1"; // Ethereum Mainnet
-        setIsMainnet(chainId === mainnetChainId);
-
-        if (chainId !== mainnetChainId) {
-          try {
-            await window.ethereum.request({
-              method: "wallet_switchEthereumChain",
-              params: [{ chainId: mainnetChainId }],
-            });
-            setIsMainnet(true);
-          } catch (switchError: any) {
-            if (switchError.code === 4902) {
-              console.error("Mainnet not added to user's wallet");
-            } else {
-              console.error("Failed to switch to Mainnet", switchError);
-            }
-          }
-        }
-      } catch (error) {
-        console.error("Error checking network:", error);
-      }
-    }
-  };
-
-  const checkWalletConnection = useCallback(async () => {
-    if (typeof window.ethereum !== "undefined") {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_accounts",
-        });
-        if (accounts.length > 0) {
-          setIsWalletConnected(true);
-          setWalletAddress(accounts[0]);
-          fetchMintCounts(accounts[0]);
-          checkFreeMintEligibility(accounts[0]);
-          fetchEthBalance(accounts[0]);
-          await checkNetwork();
-        }
-      } catch (error) {
-        console.error("Error checking wallet connection:", error);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    checkWalletConnection();
-
-    if (typeof window.ethereum !== "undefined") {
-      window.ethereum.on("chainChanged", checkNetwork);
-      return () => {
-        window.ethereum.removeListener("chainChanged", checkNetwork);
-      };
-    }
-  }, [checkWalletConnection]);
-
-  const connectWallet = async () => {
-    if (typeof window.ethereum !== "undefined") {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        setIsWalletConnected(true);
-        setWalletAddress(accounts[0]);
-        fetchMintCounts(accounts[0]);
-        checkFreeMintEligibility(accounts[0]);
-        fetchEthBalance(accounts[0]);
-        await checkNetwork();
-      } catch (error) {
-        console.error("Error connecting wallet:", error);
-      }
-    }
-  };
-
-  const fetchMintCounts = async (address: string) => {
-    if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const contract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        provider
-      );
-
-      const publicCount = await contract.getMintCountPublic(address);
-      setPublicMintCount(publicCount.toNumber());
-
-      const freeCount = await contract.getMintCountFree(address);
-      setFreeMintCount(freeCount.toNumber());
-    }
-  };
-
-  const fetchEthBalance = async (address: string) => {
-    if (typeof window.ethereum !== "undefined") {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const balance = await provider.getBalance(address);
-      setEthBalance(ethers.utils.formatEther(balance));
-    }
-  };
-
-  const checkFreeMintEligibility = (address: string) => {
-    setIsFreeMintEligible(address.toLowerCase() in allowlist);
-  };
-
-  const mint = async (isFree = false) => {
-    setIsMinting(true);
-    setStatus(isFree ? "Minting Free..." : "Minting...");
-    try {
-      if (typeof window.ethereum !== "undefined") {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contract = new ethers.Contract(
-          contractAddress,
-          contractABI,
-          signer
-        );
-
-        let tx;
-        if (isFree) {
-          const tokens = (allowlist as Allowlist)[
-            walletAddress.toLowerCase()
-          ] as string[];
-          if (!tokens || tokens.length === 0)
-            throw new Error("Not eligible for free mint");
-          tx = await contract.mintFree(tokens);
-        } else {
-          const value = ethers.utils.parseEther(
-            (0.0888 * mintCount).toString()
-          );
-          const gasLimit = 600000 * mintCount;
-          tx = await contract.mintPublic(mintCount, { value, gasLimit });
-        }
-
-        console.log("Transaction sent:", tx.hash);
-        setTxHash(tx.hash);
-        setStatus("Minting...");
-        await tx.wait();
-        setStatus("Success!");
-        setMintSuccess(true);
-        await fetchMintCounts(walletAddress);
-        if (isFree) setIsFreeMintEligible(false);
-      } else {
-        throw new Error("Ethereum object not found");
-      }
-    } catch (error: any) {
-      console.error("Error minting NFT:", error);
-      handleMintError(error);
-    } finally {
-      setIsMinting(false);
-      setIsMintingFree(false);
-    }
-  };
-
-  const handleMintError = (error: any) => {
-    if (error.code === "INSUFFICIENT_FUNDS") {
-      setStatus("Insufficient funds");
-    } else if (error.code === 4001) {
-      setStatus("Transaction rejected");
-    } else if (error.message.includes("execution reverted")) {
-      const errorMessage = error.error?.message || "Contract error";
-      setStatus(errorMessage);
-    } else {
-      setStatus("Minting failed. Check console for details.");
-    }
-  };
-
-  const resetMintState = () => {
-    setMintSuccess(false);
-    setTxHash("");
-    setStatus("Mint");
-  };
-
-  const totalPrice = 0.0888 * mintCount;
-  const hasEnoughEth = parseFloat(ethBalance) >= totalPrice;
-
+  const [isHovered, setIsHovered] = useState(false);
+  const [isPressed, setIsPressed] = useState(false);
+  
   return (
-    <div className="space-y-4 w-full max-w-md">
-      {!isWalletConnected ? (
-        <Button
-          variant="default"
-          className="w-full h-20 text-lg"
-          onClick={connectWallet}
-        >
-          Connect Wallet
-        </Button>
-      ) : !isMainnet ? (
-        <div className="text-red-500 text-center">
-          Please switch to Ethereum Mainnet
-        </div>
-      ) : (
-        <>
-          {mintSuccess ? (
-            <div className="space-y-4">
-              <div className="text-center text-lg font-semibold">
-                Thank you for minting!
-              </div>
-              <div className="space-x-2 text-center">
-                <a
-                  href={`https://etherscan.io/tx/${txHash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#FFDF12] hover:underline"
-                >
-                  View on Etherscan
-                </a>
-                <span>|</span>
-                <span
-                  className="text-[#FFDF12] hover:underline cursor-pointer"
-                  onClick={resetMintState}
-                >
-                  Mint Again
-                </span>
+    <div className="mint-container relative">
+      <motion.button
+        className="relative px-10 py-5 bg-primary text-white font-bold tracking-widest overflow-hidden text-lg uppercase"
+        onHoverStart={() => setIsHovered(true)}
+        onHoverEnd={() => setIsHovered(false)}
+        onTapStart={() => setIsPressed(true)}
+        onTap={() => {
+          setTimeout(() => setIsPressed(false), 200);
+          alert('Mint functionality will be connected soon');
+        }}
+        onTapCancel={() => setIsPressed(false)}
+        
+        initial={{ boxShadow: "6px 6px 0 rgba(0, 0, 0, 0.8)" }}
+        animate={{ 
+          y: isPressed ? 6 : 0, 
+          x: isPressed ? 6 : 0,
+          boxShadow: isPressed 
+            ? "0px 0px 0 rgba(0, 0, 0, 0.8)" 
+            : isHovered 
+              ? "3px 3px 0 rgba(0, 0, 0, 0.8)" 
+              : "6px 6px 0 rgba(0, 0, 0, 0.8)"
+        }}
+        whileHover={{ backgroundColor: "#C62828" }}
+        transition={{ duration: 0.1 }}
+      >
+        <span className="relative z-10">MINT YOUR BAUHAUS SIGNET</span>
+        
+        {/* Shine effect */}
+        <AnimatePresence>
+          {isHovered && (
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              initial={{ x: "-100%" }}
+              animate={{ x: "100%" }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+            />
+          )}
+        </AnimatePresence>
+        
+        {/* Corner decorative element */}
+        <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-white/30"></div>
+        <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-white/30"></div>
+      </motion.button>
+      
+      {/* Info panel with staggered animation */}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div 
+            className="absolute left-0 right-0 mt-3 bg-black/80 backdrop-blur-sm border border-white/10 overflow-hidden z-20"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="p-4">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.1 }}
+              >
+                <h3 className="text-lg font-bold text-white mb-2">Own a piece of Bauhaus history</h3>
+                <ul className="space-y-2">
+                  {[
+                    "Limited Edition NFT Collection",
+                    "Supports the Schlemmer Archives",
+                    "Certificate of Authenticity Included",
+                    "True to Bauhaus Principles"
+                  ].map((item, index) => (
+                    <motion.li 
+                      key={index}
+                      className="flex items-start text-gray-300"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.2 + index * 0.1 }}
+                    >
+                      <span className="block w-2 h-2 bg-primary mt-1.5 mr-2"></span>
+                      <span>{item}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            </div>
+            
+            {/* Geometric pattern background */}
+            <div className="absolute inset-0 -z-10 overflow-hidden opacity-5">
+              <div className="absolute inset-0 grid grid-cols-6 grid-rows-3">
+                {Array(18).fill(0).map((_, i) => (
+                  <div key={i} className="border border-white"></div>
+                ))}
               </div>
             </div>
-          ) : (
-            <>
-              {isFreeMintEligible && freeMintCount === 0 ? (
-                <Button
-                  variant="secondary"
-                  className="w-full h-20 text-lg"
-                  onClick={() => mint(true)}
-                  disabled={isMinting || isMintingFree}
-                >
-                  {isMintingFree ? "Minting..." : "Mint Free"}
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    variant="default"
-                    className="w-full h-20 text-lg"
-                    onClick={() => mint(false)}
-                    disabled={
-                      isMinting || publicMintCount >= 10 || !hasEnoughEth
-                    }
-                  >
-                    {publicMintCount >= 10
-                      ? "Limit Reached"
-                      : `Mint (${totalPrice.toFixed(4)} ETH)`}
-                  </Button>
-                  {publicMintCount >= 10 && (
-                    <div className="text-red-500 text-sm">
-                      Sorry, only 10 NFTs per wallet
-                    </div>
-                  )}
-                  {!hasEnoughEth && (
-                    <div className="text-red-500 text-sm">
-                      Not enough ETH to mint
-                    </div>
-                  )}
-                  <Slider
-                    min={1}
-                    max={10 - publicMintCount}
-                    step={1}
-                    value={[mintCount]}
-                    onValueChange={(value) => setMintCount(value[0])}
-                    className="w-full"
-                    disabled={publicMintCount >= 10}
-                  />
-                  <div className="text-center">
-                    {mintCount} {mintCount > 1 ? "" : ""}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    You minted: {publicMintCount} / 10
-                  </div>
-                </>
-              )}
-            </>
-          )}
-        </>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Bottom accent line that animates in */}
+      <motion.div 
+        className="h-1 bg-white/10 mt-1"
+        initial={{ width: 0 }}
+        animate={{ width: "100%" }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+      />
     </div>
   );
 }

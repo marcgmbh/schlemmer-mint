@@ -7,70 +7,124 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { motion } from "framer-motion";
 
 function HeroDescription() {
   return (
-    <p className="text-lg mb-8 max-w-3xl text-left">
-      The &ldquo;Bauhaus Signet&rdquo; NFT, originally created in 1923 by Oskar
-      Schlemmer, is an authorized collaboration with The Oskar Schlemmer Theatre
-      Archives that brings a seminal work of 20th-century design into the
-      blockchain era. The iconic Bauhaus signet will persist on Ethereum
-      forever, as fully onchain generative SVG renditions.
-      <BauhausDialog />
-    </p>
+    <motion.div 
+      className="max-w-3xl"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, delay: 1 }}
+    >
+      <div className="py-2 border-l border-white/10 pl-6">
+        <motion.p 
+          className="text-xl leading-relaxed font-light tracking-wide text-white/80"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
+        >
+          The <span className="text-primary">Bauhaus Signet</span> NFT, originally created in 1923 by Oskar
+          Schlemmer, is an authorized collaboration with The Oskar Schlemmer Theatre
+          Archives that brings a seminal work of 20th-century design into the
+          blockchain era.
+          <BauhausDialog />
+        </motion.p>
+      </div>
+    </motion.div>
   );
 }
 
 function BauhausDialog() {
   return (
     <Dialog>
-      <DialogTrigger className="block text-left  w-full mt-4 text-[#FFDF12]">
-        Why put the Bauhaus Signet onchain?
+      <DialogTrigger asChild>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5, duration: 0.5 }}
+          className="mt-6 flex items-center cursor-pointer group"
+        >
+          <span className="text-primary/80 group-hover:text-primary transition-colors duration-300 text-lg">
+            Why put the Bauhaus Signet onchain?
+          </span>
+          <motion.div 
+            className="ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300"
+          >
+            →
+          </motion.div>
+        </motion.div>
       </DialogTrigger>
-      <DialogContent>
+      
+      <DialogContent className="bg-black/95 border border-white/20 max-w-3xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl mb-2">
-            Bauhaus and Blockchain: Parallel Revolutions in Design and
-            Technology
+          <DialogTitle className="text-3xl mb-6 font-light text-primary tracking-wide">
+            Bauhaus and Blockchain: Parallel Revolutions
           </DialogTitle>
-          <ScrollArea className="h-[400px] w-full rounded-md">
-            <DialogDescription className="text-base pr-4">
-              The Bauhaus school and Blockchain technology, though separated by
-              a century, share striking parallels in their revolutionary impact.
-              Both fundamentally restructured their respective fields: Bauhaus
-              dismantled barriers between art, craft, and industry, while
-              Blockchain redefines data management and value exchange. They
-              embody decentralization, challenging established
-              authorities&mdash;Bauhaus confronted academic art institutions,
-              while Blockchain resists centralized control. Innovation through
-              technology integration is central to both: Bauhaus merged art with
-              industrial techniques, as Blockchain fuses cryptography with
-              distributed systems. The ethos of building and creation is
-              embedded in their very names&mdash;&ldquo;Bauhaus&rdquo; meaning
-              &ldquo;building house,&rdquo; echoed in the crypto world&rsquo;s
-              &ldquo;BUIDL&rdquo; culture. Both movements reimagine identity and
-              representation. The Bauhaus Signet, a minimalist human profile,
-              finds its digital counterpart in Blockchain&rsquo;s NFTs and
-              digital identities. Community collaboration is crucial: Bauhaus
-              fostered artist collectives, mirroring Blockchain&rsquo;s
-              open-source development and DAOs. Bauhaus and Blockchain share a
-              commitment to progressive education and interdisciplinary
-              approaches. Bauhaus revolutionized design education, while
-              Blockchain encourages continuous learning across technology and
-              finance. Both strive for longevity&mdash;Bauhaus through enduring
-              design principles, Blockchain through censorship-resistant,
-              &ldquo;forever&rdquo; onchain data. Symbolically, the Bauhaus
-              logo&rsquo;s 101st anniversary aligns with Blockchain&rsquo;s
-              binary foundation. Both have global reach: Bauhaus influenced
-              worldwide design, as Blockchain aims for borderless adoption. They
-              promote transparency, establish new paradigms of trust and value,
-              and employ modular, scalable design principles. Ultimately, both
-              Bauhaus and Blockchain empower individuals, democratizing their
-              respective fields. They embody an experimental mindset, constantly
-              pushing boundaries and redefining the role of intermediaries. In
-              essence, Bauhaus and Blockchain represent transformative forces
-              that reshape how we perceive, create, and interact with the world
-              around us.
+          
+          <div className="w-12 h-px bg-primary/30 mb-6"></div>
+          
+          <ScrollArea className="h-[500px] w-full rounded-md pr-6">
+            <DialogDescription className="text-lg pr-6 leading-relaxed font-light text-white/80">
+              <div className="space-y-6">
+                <p>
+                  The Bauhaus school and Blockchain technology, though separated by
+                  a century, share striking parallels in their revolutionary impact.
+                </p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-12">
+                  <div className="bg-white/5 p-6 border-l border-primary">
+                    <h3 className="text-white text-xl mb-3">Structural Disruption</h3>
+                    <p className="text-white/70">
+                      Both fundamentally restructured their respective fields: Bauhaus
+                      dismantled barriers between art, craft, and industry, while
+                      Blockchain redefines data management and value exchange.
+                    </p>
+                  </div>
+                  
+                  <div className="bg-white/5 p-6 border-l border-white/20">
+                    <h3 className="text-white text-xl mb-3">Decentralized Philosophy</h3>
+                    <p className="text-white/70">
+                      They embody decentralization, challenging established
+                      authorities—Bauhaus confronted academic art institutions,
+                      while Blockchain resists centralized control.
+                    </p>
+                  </div>
+                </div>
+                
+                <p>
+                  Innovation through technology integration is central to both: Bauhaus merged art with
+                  industrial techniques, as Blockchain fuses cryptography with
+                  distributed systems.
+                </p>
+                
+                <p>
+                  Both movements reimagine identity and representation. The Bauhaus Signet, a minimalist human profile,
+                  finds its digital counterpart in Blockchain's NFTs and
+                  digital identities.
+                </p>
+                
+                <div className="my-8 p-6 border-l border-primary/50">
+                  <p className="text-white italic">
+                    "Bauhaus and Blockchain share a commitment to progressive education and interdisciplinary
+                    approaches. Bauhaus revolutionized design education, while
+                    Blockchain encourages continuous learning across technology and
+                    finance."
+                  </p>
+                </div>
+                
+                <p>
+                  Both strive for longevity—Bauhaus through enduring
+                  design principles, Blockchain through censorship-resistant,
+                  "forever" onchain data.
+                </p>
+                
+                <p className="text-primary font-light text-xl mt-12">
+                  In essence, Bauhaus and Blockchain represent transformative forces
+                  that reshape how we perceive, create, and interact with the world
+                  around us.
+                </p>
+              </div>
             </DialogDescription>
           </ScrollArea>
         </DialogHeader>

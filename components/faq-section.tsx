@@ -1,119 +1,143 @@
-function FAQSection() {
-  return (
-    <section className="mb-16">
-      <h2 className="text-2xl mb-4">FAQ</h2>
+"use client";
+
+import React, { useState } from 'react';
+import { Plus, Minus } from "lucide-react";
+
+type FAQItem = {
+  question: string;
+  answer: React.ReactNode;
+};
+
+const faqItems: FAQItem[] = [
+  {
+    question: "What is the Bauhaus Signet NFT?",
+    answer: (
       <div className="space-y-2">
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">
-            What is the &quot;Bauhaus Signet&quot; NFT Collection?
-          </summary>
-          <p className="mt-2">
-            The &quot;Bauhaus Signet&quot; NFT Collection is a collection of
-            1,888 unique digital artworks created by Oskar Schlemmer in 1923.
-            The collection is authenticated by the Oskar Schlemmer Theatre
-            Archives and showcases generative renditions of his iconic designs,
-            celebrating the intersection of art and technology.
-          </p>
-        </details>
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">
-            When will the NFTs be available for minting? Is there a roadmap?
-          </summary>
-          <p className="mt-2">
-            The NFTs will be available for minting on September 4, 2024.
-            <br />
-            There is no roadmap. Utility? This is art.
-          </p>
-        </details>
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">
-            How many NFTs can I mint?
-          </summary>
-          <p className="mt-2">
-            Public Mint has a limit of 10. WL mints are max 1. These limits are
-            to ensure fair distribution among collectors.
-          </p>
-        </details>
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">
-            What are the pricing tiers for the NFTs?
-          </summary>
-          <p className="mt-2">0.0888 ETH for public.</p>
-        </details>
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">
-            How can I purchase an NFT from this collection?
-          </summary>
-          <p className="mt-2">
-            You can purchase an NFT directly through our minting page on the
-            launch date. Ensure your wallet is connected and has sufficient ETH
-            for the transaction.
-          </p>
-        </details>
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">
-            What type of wallet do I need to mint an NFT?
-          </summary>
-          <p className="mt-2">
-            You will need a cryptocurrency wallet that supports Ethereum, such
-            as MetaMask, Rainbow, Trust Wallet, or Coinbase Wallet.
-          </p>
-        </details>
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">
-            Will the NFTs be stored on the blockchain?
-          </summary>
-          <p className="mt-2">
-            Yes, all NFTs in the &quot;Bauhaus Signet&quot; collection are fully
-            onchain and stored on the Ethereum blockchain, ensuring their
-            permanence and ownership.
-          </p>
-        </details>
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">What is an onchain NFT?</summary>
-          <p className="mt-2">
-            Key characteristics of onchain NFTs are:
-            <br />
-            - Assets and metadata are stored on the blockchain, not on external
-            servers or IPFS
-            <br />
-            - Smart contracts that generate the NFTs are also stored on-chain
-            <br />
-            - All data is accessible as long as the blockchain is operational
-            <br />- Eliminates reliance on external systems or third parties
-          </p>
-        </details>
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">Wen Reveal?</summary>
-          <p className="mt-2">
-            The Smart Contract has a commit-reveal scheme (similar to Checks VV)
-            whereby the reveal happens after the next person mints, or after ~32
-            blocks on Ethereum. Be patient, reload metadata. Enjoy the art -
-            don’t worry, it will persist forever.
-          </p>
-        </details>
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">
-            What rights do I have when I purchase an NFT?
-          </summary>
-          <p className="mt-2">
-            Purchasing an NFT grants you a non-exclusive, personal use license
-            for the digital artwork. All intellectual property rights remain
-            with the trademark holders.
-          </p>
-        </details>
-        <details className="p-4 rounded-lg">
-          <summary className="cursor-pointer">Legal Note</summary>
-          <p className="mt-2">
-            The Bauhaus emblem is in the public domain, but the trademark rights
-            are owned by C. Raman Schlemmer. Each NFT provides a non-exclusive,
-            personal use license for the digital artwork, with all intellectual
-            property rights retained by the trademark holders.
-          </p>
-        </details>
+        <p>
+          The Bauhaus Signet NFT is a digital collectible representing Oskar Schlemmer's 
+          iconic 1923 Bauhaus logo design - now preserved on the blockchain as fully onchain SVG renditions.
+        </p>
+        <p>
+          Each NFT is a unique interpretation of the original signet, with subtle variations in composition, 
+          color, and form while maintaining the core Bauhaus aesthetic principles.
+        </p>
+      </div>
+    )
+  },
+  {
+    question: "How is this connected to Oskar Schlemmer?",
+    answer: (
+      <div className="space-y-2">
+        <p>
+          This is an authorized collaboration with The Oskar Schlemmer Theatre Archives, 
+          ensuring authenticity and respect for Schlemmer's original work.
+        </p>
+        <p>
+          A portion of all proceeds supports the preservation of Schlemmer's legacy and helps 
+          fund ongoing efforts to save his studio space for future generations.
+        </p>
+      </div>
+    )
+  },
+  {
+    question: "What makes these NFTs special?",
+    answer: (
+      <div className="space-y-2">
+        <p>
+          Unlike many NFTs that rely on external storage, the Bauhaus Signet is 100% onchain - the artwork 
+          exists entirely within the Ethereum blockchain, ensuring permanent preservation.
+        </p>
+        <p>
+          Each piece connects the iconic Bauhaus design principles of the 1920s with contemporary 
+          blockchain technology, bridging historical art movements with the digital future.
+        </p>
+      </div>
+    )
+  },
+  {
+    question: "How can I use my Bauhaus Signet NFT?",
+    answer: (
+      <div className="space-y-2">
+        <p>
+          As an owner, you receive the digital NFT, grants you a non-exclusive, personal use license for the digital artwork.
+          The Bauhaus emblem is in the public domain, but the trademark rights are owned by C. Raman Schlemmer.
+          Each NFT provides a non-exclusive, personal use license for the digital artwork, with all intellectual property rights retained by the trademark holders.
+        </p>
+        <p>
+          You become part of a community of art history enthusiasts and collectors supporting 
+          the preservation of Schlemmer's work and Bauhaus design heritage.
+        </p>
+      </div>
+    )
+  },
+  {
+    question: "Where do proceeds from sales go?",
+    answer: (
+      <div className="space-y-2">
+        <p>
+          A significant percentage of primary sales and royalties goes directly to The Oskar Schlemmer Theatre Archives 
+          to support their preservation and educational efforts.
+        </p>
+        <p>
+          Part of the proceeds also funds the campaign to save Schlemmer's original studio space, which is 
+          currently at risk of being lost to commercial development.
+        </p>
+      </div>
+    )
+  }
+];
+
+export default function FAQSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggleFAQ = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  return (
+    <section className="my-16 faq-section">
+      <div className="bg-black/30 border border-white/10 p-8 rounded-lg">
+        <h2 className="text-3xl mb-8 font-bold text-primary">Frequently Asked Questions</h2>
+        
+        <div className="space-y-4">
+          {faqItems.map((item, index) => (
+            <div 
+              key={index} 
+              className={`border-l-4 transition-all duration-300 ${
+                openIndex === index 
+                  ? 'border-primary bg-black/40 shadow-lg' 
+                  : 'border-white/20 bg-black/20 hover:border-white/40'
+              }`}
+            >
+              <button
+                className="flex justify-between items-center w-full px-6 py-4 text-left focus:outline-none"
+                onClick={() => toggleFAQ(index)}
+              >
+                <h3 className={`text-xl ${openIndex === index ? 'font-medium text-primary' : 'text-gray-300'}`}>
+                  {item.question}
+                </h3>
+                <span className="ml-6 flex-shrink-0">
+                  {openIndex === index ? (
+                    <Minus className="h-5 w-5 text-primary" />
+                  ) : (
+                    <Plus className="h-5 w-5 text-gray-400" />
+                  )}
+                </span>
+              </button>
+              
+              <div 
+                className={`overflow-hidden transition-all duration-300 ${
+                  openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+                }`}
+              >
+                <div className="px-6 pb-6 text-gray-300">
+                  {item.answer}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
-
-export default FAQSection;
