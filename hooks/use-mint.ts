@@ -58,13 +58,18 @@ export function useMint() {
       setIsMinting(true);
       console.log('Starting mint...');
       
-      // Execute the mint transaction
+      // Convert mint price exactly to match contract expectations
+      const mintPriceInEth = MINT_PRICE;
+      console.log(`Sending ${mintPriceInEth} ETH for mint`);
+      
+      // Execute the mint transaction with higher gas limit
       const hash = await writeContractAsync({
         address: BAUHAUS_CONTRACT_ADDRESS,
         abi: BAUHAUS_ABI,
         functionName: 'mintPublic',
         args: [BigInt(1)], // Mint 1 NFT
-        value: parseEther(MINT_PRICE), // Send ETH for minting
+        value: parseEther(mintPriceInEth),
+        gas: BigInt(300000), // Provide explicit higher gas limit
       });
       
       console.log('Mint transaction submitted:', hash);

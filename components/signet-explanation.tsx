@@ -84,6 +84,44 @@ export function SignetExplanation() {
           </motion.div>
         </div>
       </div>
+      
+      {/* Historical Images Section - Added below the main content */}
+      <motion.div 
+        className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.6 }}
+      >
+        <div className="flex flex-col">
+          <div className="overflow-hidden border border-white/10 rounded-md bg-black">
+            <Image 
+              src="/bauhaus-masters.jpg" 
+              alt="Historical photo of Bauhaus masters" 
+              width={600}
+              height={400}
+              className="w-full object-cover transition-all duration-500 hover:scale-105"
+            />
+          </div>
+          <p className="mt-3 text-sm text-white/60 italic">
+            The Bauhaus masters gathered in 1923. From left to right: Joseph Hartwig, Wassily Kandinsky, Paul Klee, Heinrich Koch, and Oskar Schlemmer.
+          </p>
+        </div>
+        
+        <div className="flex flex-col">
+          <div className="overflow-hidden border border-white/10 rounded-md bg-white p-6 flex items-center justify-center">
+            <Image 
+              src="/bauhaus-signet-stamp.jpg" 
+              alt="Official Bauhaus signet stamp" 
+              width={400}
+              height={400}
+              className="w-4/5 max-h-48 object-contain transition-all duration-500 hover:scale-105"
+            />
+          </div>
+          <p className="mt-3 text-sm text-white/60 italic">
+            The iconic Staatliches Bauhaus Weimar signet designed by Oskar Schlemmer in 1922, representing the school&apos;s unified approach to art and technology.
+          </p>
+        </div>
+      </motion.div>
     </section>
   );
 } 

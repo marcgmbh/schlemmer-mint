@@ -78,9 +78,9 @@ export default function AboutContent() {
                 <Image 
                   src="/bauhaus-signet-stamp.jpg" 
                   alt="The original Bauhaus signet designed by Oskar Schlemmer" 
-                  width={500} 
+                  width={500}
                   height={500}
-                  className="w-full"
+                  className="w-full h-auto"
                 />
                 <div className="mt-2 text-sm text-white/60 text-center">
                   The original Bauhaus signet, featuring the distinctive geometric face design
@@ -119,9 +119,9 @@ export default function AboutContent() {
                 <Image 
                   src="/bauhaus-masters.jpg" 
                   alt="Bauhaus masters including Oskar Schlemmer" 
-                  width={800} 
+                  width={800}
                   height={500}
-                  className="w-full"
+                  className="w-full h-auto"
                 />
                 <div className="mt-2 text-sm text-white/60 text-center">
                   Lyonel Feininger, Wassily Kandinsky, Oskar Schlemmer, Georg Muche, and Paul Klee. In Paul Klee&apos;s studio at the Bauhaus Weimar, 1925.

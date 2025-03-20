@@ -82,14 +82,18 @@ export default function ClientHome() {
           
           {/* Wallet Connection Status */}
           {isConnected ? (
-            <div className="text-sm py-1 px-3 bg-primary/10 border border-primary/30 text-white/90 rounded-sm flex items-center">
-              <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
-              Wallet Connected
+            <div className="flex flex-col items-end">
+              <div className="text-sm py-1 px-3 bg-primary/10 border border-primary/30 text-white/90 rounded-sm flex items-center">
+                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                Wallet Connected
+              </div>
             </div>
           ) : (
-            <div className="text-sm py-1 px-3 bg-white/5 border border-white/10 text-white/50 rounded-sm flex items-center">
-              <div className="w-2 h-2 bg-white/20 rounded-full mr-2"></div>
-              Wallet Not Connected
+            <div className="flex flex-col items-end">
+              <div className="text-sm py-1 px-3 bg-white/5 border border-white/10 text-white/50 rounded-sm flex items-center">
+                <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
+                Wallet Not Connected
+              </div>
             </div>
           )}
           
@@ -188,12 +192,12 @@ export default function ClientHome() {
           </div>
         </section>
         
-        {/* Gallery - Enhanced with Bauhaus style */}
-        <section className="py-32 bg-[#060606] relative">
+        {/* Bauhaus Generator Section */}
+        <section className="py-32 relative">
           <div className="absolute left-0 top-0 w-1 h-24 bg-primary"></div>
           <div className="container mx-auto px-6 lg:px-8">
             <div className="relative max-w-6xl mx-auto">
-              {/* Updated gallery header */}
+              {/* Generator header */}
               <div className="mb-16 flex items-center">
                 <motion.div 
                   className="w-12 h-px bg-primary mr-4"
@@ -209,6 +213,7 @@ export default function ClientHome() {
                   transition={{ duration: 0.5 }}
                   viewport={{ once: true }}
                 >
+                  Generate Your Own
                 </motion.h2>
               </div>
               
@@ -255,58 +260,6 @@ export default function ClientHome() {
               </motion.div>
               
               <FAQSection />
-            </div>
-          </div>
-        </section>
-        
-        {/* About Project - With purposeful color usage */}
-        <section className="py-32 bg-[#060606] relative">
-          <div className="absolute left-0 top-0 w-1 h-24 bg-[#FDD835]"></div>
-          <div className="container mx-auto px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.8 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="border-t border-[#1E88E5]/30 pt-8">
-                    <h3 className="text-xl uppercase tracking-wide mb-6 font-light text-[#1E88E5]">The Archives</h3>
-                    <p className="text-white/60 mb-8 leading-relaxed">
-                      The Oskar Schlemmer Theatre Archives is dedicated to preserving and promoting Schlemmer&apos;s legacy,
-                      the archives maintain his works and support the study of his
-                      contributions to art and design.
-                    </p>
-                    <Link href="https://www.schlemmer.org/" className="group inline-flex items-center">
-                      <span className="text-sm uppercase tracking-wider text-white group-hover:text-[#1E88E5] transition-colors">Visit the Archives</span>
-                      <span className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
-                    </Link>
-                  </div>
-                </motion.div>
-                
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
-                  viewport={{ once: true }}
-                >
-                  <div className="border-t border-[#FDD835]/30 pt-8">
-                    <h3 className="text-xl uppercase tracking-wide mb-6 font-light text-[#FDD835]">Support the Studio</h3>
-                    <p className="text-white/60 mb-8 leading-relaxed">
-                      Help preserve Schlemmer&apos;s studio for future generations and 
-                      support ongoing research into Bauhaus design principles.
-                    </p>
-                    <Link 
-                      href="https://www.change.org/p/save-the-oskar-schlemmer-studio-for-future-generations-313bb710-4a95-4cb7-9dbf-8523c3871c32"
-                      className="group inline-flex items-center"
-                    >
-                      <span className="text-sm uppercase tracking-wider text-white group-hover:text-[#FDD835] transition-colors">Sign the Petition</span>
-                      <span className="ml-2 inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
-                    </Link>
-                  </div>
-                </motion.div>
-              </div>
             </div>
           </div>
         </section>

@@ -23,28 +23,17 @@ export const ConnectButton = () => {
   if (isConnected && address) {
     return (
       <div className="flex items-center">
-        <Button 
-          onClick={() => disconnect()}
-          variant="outline" 
-          size="sm"
-          className="flex items-center justify-center text-sm gap-2 font-normal border-white/10 bg-black hover:bg-white/5"
-        >
-          <span className="text-white/90">{formatEthereumAddress(address)}</span>
-          <LogOut className="h-3 w-3 text-white/50" />
-        </Button>
+        <div className="w-2 h-2 rounded-full mr-2 bg-green-500"></div>
+        <span className="mr-2">{address ? formatEthereumAddress(address) : 'Connected'}</span>
+        <button onClick={() => disconnect()} className="text-xs text-gray-400">Disconnect</button>
       </div>
     );
   }
 
   return (
-    <Button 
-      onClick={handleConnectClick}
-      variant="outline" 
-      size="sm"
-      className="flex items-center justify-center text-sm gap-2 font-normal border-white/10 bg-black hover:bg-white/5"
-    >
-      Connect
-      <ChevronDown className="h-3 w-3 text-white/70" />
-    </Button>
+    <div className="flex items-center">
+      <div className="w-2 h-2 rounded-full mr-2 bg-red-500"></div>
+      <button onClick={handleConnectClick}>Connect Wallet</button>
+    </div>
   );
 }; 

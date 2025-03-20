@@ -535,9 +535,6 @@ export default function BauhausGenerator() {
           <div className="flex-1"></div>
           
           <div className="space-y-4 mt-auto">
-            <div className="text-white/70 text-sm">
-              Price: <span className="text-white font-medium">0.08 ETH</span>
-            </div>
             {isConnected && (
               <motion.div
                 initial={{ opacity: 0 }}
