@@ -68,7 +68,7 @@ export default function AboutContent() {
               
               <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed font-light">
                 The iconic Bauhaus logo created in 1923 by Oskar Schlemmer represents both 
-                the human form and the school's artistic philosophy in a single, powerful design.
+                the human form and the school&apos;s artistic philosophy in a single, powerful design.
               </p>
             </motion.div>
 
@@ -94,17 +94,17 @@ export default function AboutContent() {
               
               <div className="text-white/80 space-y-6 leading-relaxed">
                 <p>
-                  "The Bauhaus school realized that they had to be more contemporary. In the master council they discussed creating a new logo, and the artists were asked to present proposals."
+                  &quot;The Bauhaus school realized that they had to be more contemporary. In the master council they discussed creating a new logo, and the artists were asked to present proposals.&quot;
                 </p>
                 
                 <div className="pl-6 border-l border-white/20">
                   <p className="italic">
-                    "If you think that at that time, there was Wassily Kandinsky, Paul Klee, Lyonel Feininger, but also László Moholy-Nagy; who was very much interested in graphic design. It is amazing that they chose the logo of Oskar Schlemmer."
+                    &quot;If you think that at that time, there was Wassily Kandinsky, Paul Klee, Lyonel Feininger, but also László Moholy-Nagy; who was very much interested in graphic design. It&apos;s amazing that they chose the logo of Oskar Schlemmer.&quot;
                   </p>
                 </div>
                 
                 <p>
-                  "The new logo was both about the human being as well as about art, about teaching. It encompassed so many aspects. Very striking how with a few sort of vertical and horizontal elements, you create a face."
+                  &quot;The new logo was both about the human being as well as about art, about teaching. It encompassed so many aspects. Very striking how with a few sort of vertical and horizontal elements, you create a face.&quot;
                 </p>
                 
                 <p className="text-primary text-lg">
@@ -124,7 +124,7 @@ export default function AboutContent() {
                   className="w-full"
                 />
                 <div className="mt-2 text-sm text-white/60 text-center">
-                  Lyonel Feininger, Wassily Kandinsky, Oskar Schlemmer, Georg Muche, and Paul Klee. In Paul Klee's studio at the Bauhaus Weimar, 1925.
+                  Lyonel Feininger, Wassily Kandinsky, Oskar Schlemmer, Georg Muche, and Paul Klee. In Paul Klee&apos;s studio at the Bauhaus Weimar, 1925.
                 </div>
               </div>
             </motion.div>

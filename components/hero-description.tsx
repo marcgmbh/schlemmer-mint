@@ -57,7 +57,7 @@ function BauhausDialog() {
       </DialogTrigger>
       
       <DialogContent className="bg-black/95 border border-white/20 max-w-3xl">
-        <DialogHeader>
+        <DialogHeader className="flex flex-col">
           <DialogTitle className="text-3xl mb-6 font-light text-primary tracking-wide">
             Bauhaus and Blockchain: Parallel Revolutions
           </DialogTitle>
@@ -100,23 +100,23 @@ function BauhausDialog() {
                 
                 <p>
                   Both movements reimagine identity and representation. The Bauhaus Signet, a minimalist human profile,
-                  finds its digital counterpart in Blockchain's NFTs and
+                  finds its digital counterpart in Blockchain&apos;s NFTs and
                   digital identities.
                 </p>
                 
                 <div className="my-8 p-6 border-l border-primary/50">
                   <p className="text-white italic">
-                    "Bauhaus and Blockchain share a commitment to progressive education and interdisciplinary
+                    &ldquo;Bauhaus and Blockchain share a commitment to progressive education and interdisciplinary
                     approaches. Bauhaus revolutionized design education, while
                     Blockchain encourages continuous learning across technology and
-                    finance."
+                    finance.&rdquo;
                   </p>
                 </div>
                 
                 <p>
                   Both strive for longevity—Bauhaus through enduring
                   design principles, Blockchain through censorship-resistant,
-                  "forever" onchain data.
+                  &ldquo;forever&rdquo; onchain data.
                 </p>
                 
                 <p className="text-primary font-light text-xl mt-12">

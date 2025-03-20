@@ -1,7 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Download, RefreshCw } from 'lucide-react';
+import { useMint } from '@/hooks/use-mint';
+import TransactionToast from './transaction-toast';
+import { WalletDialog } from './wallet-dialog';
+import { useAccount } from 'wagmi';
+import { motion } from 'framer-motion';
+import { BauhausDesign } from './bauhaus-design';
+import { useAppKit } from '@/hooks/use-appkit';
 
 // Define art styles from the BauhausMetadata contract
 enum ArtStyle {
@@ -139,9 +146,57 @@ export default function BauhausGenerator() {
   
   const [generatedNFT, setGeneratedNFT] = useState<GeneratedNFT | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastType, setToastType] = useState<'success' | 'error' | 'pending'>('pending');
+  const [toastMessage, setToastMessage] = useState('');
   
-  // Colors from the BauhausMetadata contract
-  const bauhausColors: BauhausColors = {
+  const { 
+    handleMint: originalHandleMint, 
+    isMinting, 
+    isConnected, 
+    isSaleActive,
+    mintError,
+    mintSuccess,
+    mintTxHash,
+    isConfirmed
+  } = useMint();
+  
+  const { open } = useAppKit();
+  
+  // Create a direct handler to ensure the mint button works
+  const handleMint = () => {
+    console.log("Mint button clicked in BauhausGenerator");
+    
+    // Show pending toast
+    setToastType('pending');
+    setToastMessage('Your transaction is being processed...');
+    setToastVisible(true);
+    
+    // Try the provided mint handler
+    originalHandleMint();
+  };
+  
+  // Watch for mint status changes
+  useEffect(() => {
+    if (mintError) {
+      setToastType('error');
+      setToastMessage(mintError);
+      setToastVisible(true);
+    } else if (mintSuccess) {
+      setToastType('pending');
+      setToastMessage('Transaction submitted! Waiting for confirmation...');
+      setToastVisible(true);
+    }
+    
+    if (isConfirmed) {
+      setToastType('success');
+      setToastMessage('Your Bauhaus Signet has been minted successfully!');
+      setToastVisible(true);
+    }
+  }, [mintError, mintSuccess, isConfirmed]);
+  
+  // Wrap bauhausColors in useMemo to prevent dependency changes on every render
+  const bauhausColors = React.useMemo<BauhausColors>(() => ({
     // Bauhaus Primary colors
     bauhausPrimary: {
       'Bright Red': '#F50101',
@@ -233,10 +288,10 @@ export default function BauhausGenerator() {
       'White': '#FFFFFF',
       'Black': '#000000'
     }
-  };
+  }), []);
   
-  // Trait options based on the BauhausMetadata contract
-  const traitOptions: TraitOptions = {
+  // Wrap traitOptions in useMemo to prevent dependency changes on every render
+  const traitOptions = React.useMemo<TraitOptions>(() => ({
     artStyle: [
       ArtStyle.ORIGINAL,
       ArtStyle.ORIGINAL_INVERSE,
@@ -274,10 +329,10 @@ export default function BauhausGenerator() {
       [ArtStyle.PUNKISM]: ['Black']
     },
     hasGlitch: [true, false]
-  };
+  }), [bauhausColors]);
   
   // Function to get eye color based on art style
-  const getEyeColor = (artStyle: ArtStyle, colorName: string): string => {
+  const getEyeColor = useCallback((artStyle: ArtStyle, colorName: string): string => {
     // For most styles, use blue (as in the original)
     if (artStyle === ArtStyle.ORIGINAL || artStyle === ArtStyle.ORIGINAL_INVERSE) {
       return '#1E88E5'; // Default blue
@@ -303,88 +358,70 @@ export default function BauhausGenerator() {
       // Default to blue for other styles
       return '#1E88E5';
     }
-  };
+  }, [bauhausColors]);
   
   // Function to generate a random NFT variant with enhanced randomization
-  const generateRandomNFT = () => {
+  const generateRandomNFT = useCallback(() => {
     console.log("generateRandomNFT called");
+    
+    // Early return if already generating
+    if (isGenerating) {
+      console.log("Already generating, skipping");
+      return;
+    }
+    
+    // Set generating state first
     setIsGenerating(true);
     
-    // Clear previous NFT to avoid any visual persistence
-    setGeneratedNFT(null);
+    // Create a local variable for the NFT to avoid state dependencies
+    let newNFT: GeneratedNFT | null = null;
     
-    // Super-strong entropy with multiple sources of randomness
-    const timestamp = Date.now();
-    const entropy = Math.random().toString(36) + Math.random().toString(36);
-    console.log(`Generation entropy: ${timestamp}-${entropy}`);
-    
-    // Fisher-Yates shuffle to randomize art style selection
-    const shuffledStyles = [...traitOptions.artStyle];
-    for (let i = shuffledStyles.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledStyles[i], shuffledStyles[j]] = [shuffledStyles[j], shuffledStyles[i]];
+    // Create the NFT object synchronously without state updates
+    try {
+      // Select an art style without complex shuffling
+      const artStyleIndex = Math.floor(Math.random() * traitOptions.artStyle.length);
+      const artStyle = traitOptions.artStyle[artStyleIndex];
+      
+      // Get face color options for the selected art style and pick one
+      const faceColorOptions = traitOptions.faceColors[artStyle];
+      const faceColorIndex = Math.floor(Math.random() * faceColorOptions.length);
+      const faceColor = faceColorOptions[faceColorIndex];
+      
+      // Randomly select background color
+      const backgroundColorOptions = traitOptions.backgroundColors[artStyle];
+      const backgroundColor = backgroundColorOptions[Math.floor(Math.random() * backgroundColorOptions.length)];
+      
+      // Create traits object
+      const randomTraits: NFTTraits = {
+        artStyle: artStyle,
+        faceColor: faceColor,
+        backgroundColor: backgroundColor,
+        hasGlitch: Math.random() < 0.15
+      };
+      
+      // Create the NFT object
+      newNFT = {
+        id: Math.floor(Math.random() * 10000),
+        traits: randomTraits,
+        name: `Bauhaus Signet`,
+      };
+      
+      console.log("Generated NFT:", newNFT);
+    } catch (error) {
+      console.error("Error generating NFT:", error);
+      setIsGenerating(false);
+      return;
     }
     
-    // Select an art style from the shuffled array - completely random
-    // We'll select from different positions each time to ensure variety
-    const stylePosition = Math.floor(Math.random() * shuffledStyles.length);
-    const artStyle = shuffledStyles[stylePosition];
-    console.log("Shuffled art styles:", shuffledStyles);
-    console.log("Selected art style:", artStyle, "at position", stylePosition);
-    
-    // Get face color options for the selected art style
-    const faceColorOptions = traitOptions.faceColors[artStyle];
-    
-    // Shuffle the face color options for true randomness
-    const shuffledFaceColors = [...faceColorOptions];
-    for (let i = shuffledFaceColors.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledFaceColors[i], shuffledFaceColors[j]] = [shuffledFaceColors[j], shuffledFaceColors[i]];
-    }
-    
-    // Randomly select face color with enhanced randomness
-    const faceColorIndex = Math.floor(Math.random() * shuffledFaceColors.length);
-    const faceColor = shuffledFaceColors[faceColorIndex];
-    console.log("Shuffled face colors:", shuffledFaceColors);
-    console.log("Selected face color:", faceColor, "at position", faceColorIndex);
-    
-    // Randomly select background color
-    const backgroundColorOptions = traitOptions.backgroundColors[artStyle];
-    const backgroundColor = backgroundColorOptions[Math.floor(Math.random() * backgroundColorOptions.length)];
-    
-    // Randomly select traits with enhanced entropy
-    const randomTraits: NFTTraits = {
-      artStyle: artStyle,
-      faceColor: faceColor,
-      backgroundColor: backgroundColor,
-      // Increase glitch frequency to 15% for more variety
-      hasGlitch: Math.random() < 0.15
-    };
-    
-    // Create the NFT object - keep ID only for internal reference
-    const newNFT: GeneratedNFT = {
-      id: Math.floor(Math.random() * 10000), // Only for internal reference
-      traits: randomTraits,
-      name: `Bauhaus Signet`,
-    };
-    
-    // Log the generated NFT for debugging
-    console.log("Generated NFT:", newNFT);
-    
-    // Shorter delay for better UX
+    // Use a single setTimeout for both state updates
     setTimeout(() => {
       setGeneratedNFT(newNFT);
       setIsGenerating(false);
-    }, 600);
-  };
-  
-  // Generate an initial NFT on component mount
-  useEffect(() => {
-    generateRandomNFT();
-  }, []);
+    }, 500);
+  }, [traitOptions, isGenerating]);
   
   // Function to get face color based on art style and color name
-  const getFaceColor = (artStyle: ArtStyle, colorName: string): string => {
+  const getFaceColor = useCallback((artStyle: ArtStyle, colorName: string): string => {
     if (artStyle === ArtStyle.ORIGINAL) {
       return '#FFFFFF';
     } else if (artStyle === ArtStyle.ORIGINAL_INVERSE) {
@@ -404,162 +441,124 @@ export default function BauhausGenerator() {
       // Default to Bauhaus red for other styles
       return '#E53935';
     }
-  };
+  }, [bauhausColors]);
   
-  // Add debugging useEffect
+  // Generate an initial NFT on component mount
   useEffect(() => {
-    if (generatedNFT) {
-      console.log("Rendering NFT:", generatedNFT);
-      console.log("Face color:", getFaceColor(generatedNFT.traits.artStyle, generatedNFT.traits.faceColor));
-      
-      // Check DOM for SVG
-      setTimeout(() => {
-        const svgElement = document.querySelector('.bauhaus-signet-svg');
-        console.log("SVG element found:", svgElement);
-        
-        // Check size of container
-        const container = document.querySelector('.nft-preview-container');
-        if (container) {
-          console.log("Container dimensions:", container.getBoundingClientRect());
-        }
-      }, 300);
+    // Only generate on initial mount, not on every re-render
+    const shouldGenerate = !generatedNFT && !isGenerating;
+    if (shouldGenerate) {
+      generateRandomNFT();
     }
-  }, [generatedNFT]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Intentionally keeping an empty dependency array to run only once on mount
   
   return (
-    <div className="w-full py-16">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-light text-white mb-4">Generate Your Own Signet</h2>
-          <p className="text-white/70 max-w-2xl mx-auto">
-            Explore official Bauhaus Signet variations from the Ethereum contract. 
-            Generate random combinations matching the on-chain collection that honors Oskar Schlemmer's iconic design.
-          </p>
+    <div className="relative w-full max-w-2xl mx-auto">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
+        {/* Preview column */}
+        <div className="md:col-span-7">
+          <div className="sticky top-24">
+            <div className="aspect-square w-full relative overflow-hidden rounded-md border border-white/20 bg-[#030303]">
+              <BauhausDesign />
+              {!isConnected && (
+                <div 
+                  className="absolute inset-0 backdrop-blur-[2px] flex justify-center items-center cursor-pointer z-10"
+                  onClick={() => {
+                    try {
+                      open({ view: 'Connect' });
+                    } catch (error) {
+                      console.error('Error opening wallet modal:', error);
+                    }
+                  }}
+                >
+                  <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.6 }}
+                    className="bg-black/85 border border-white/10 rounded-md py-3 px-6"
+                  >
+                    <div className="text-xl font-bold text-white mb-2">Connect Wallet</div>
+                    <div className="text-white/70 text-sm">Connect to generate your Bauhaus signet</div>
+                  </motion.div>
+                </div>
+              )}
+              
+              {isMinting && (
+                <div className="absolute inset-0 backdrop-blur-[1px] flex justify-center items-center z-10 bg-black/40">
+                  <div className="bg-black/90 border border-white/10 rounded-md p-5">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="mb-3 w-10 h-10 rounded-full border-4 border-white border-t-transparent animate-spin"></div>
+                      <div className="text-xl font-medium text-white">Minting your NFT...</div>
+                      <div className="text-white/70 text-sm mt-1">Please confirm in your wallet</div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="mt-4 text-white/60 text-sm text-center">
+              {isConnected ? 
+                "Your unique Bauhaus-inspired signet" : 
+                "Connect wallet to generate your unique Bauhaus-inspired signet"
+              }
+            </div>
+          </div>
         </div>
         
-        {/* Simplified layout - Just SVG and buttons */}
-        <div className="flex flex-col items-center space-y-8">
-          {/* SVG Preview - Larger size (400px) */}
-          <div className="relative w-[400px] h-[400px] border border-white/10">
-            {isGenerating ? (
-              <div className="absolute inset-0 flex items-center justify-center bg-black">
-                <div className="w-16 h-16 animate-spin">
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-primary rounded-full"></div>
-                  <div className="absolute top-1/2 left-0 -translate-y-1/2 w-2 h-2 bg-[#1E88E5] rounded-full"></div>
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#FDD835] rounded-full"></div>
-                  <div className="w-full h-full rounded-full border border-white/20"></div>
-                </div>
-              </div>
-            ) : generatedNFT ? (
-              <div className="w-full h-full relative">
-                {/* Background */}
-                <div 
-                  className="absolute inset-0" 
-                  style={{ 
-                    backgroundColor: generatedNFT.traits.backgroundColor === 'White' ? '#FFFFFF' : '#000000',
-                  }}
-                ></div>
-                
-                {/* Simple SVG implementation */}
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 1337 1337" 
-                  className="absolute inset-0 w-full h-full"
-                  id="bauhaus-signet"
-                >
-                  {/* Background circle */}
-                  <circle 
-                    cx="668.5" 
-                    cy="668.5" 
-                    r="628" 
-                    fill={generatedNFT.traits.backgroundColor === 'White' ? '#FFFFFF' : '#000000'} 
-                  />
-                  
-                  {/* Neck */}
-                  <path 
-                    d="M592.85 1147.5h146.83v147.25H592.85z" 
-                    fill={getFaceColor(generatedNFT.traits.artStyle, generatedNFT.traits.faceColor)}
-                  />
-                  
-                  {/* Mouth */}
-                  <path 
-                    d="M792.68 810.36v345.25H502.1v-15.24h234.64V964.74h-58.31v-25.59h58.31V810.36z" 
-                    fill={generatedNFT.traits.artStyle === ArtStyle.ORIGINAL_INVERSE ? '#000000' : '#FFFFFF'}
-                  />
-                  
-                  {/* Nose */}
-                  <path 
-                    d="M819.52 807.07v8.53H680.53v-8.53h105.43l.28-753.56 33 7z" 
-                    fill={getFaceColor(generatedNFT.traits.artStyle, generatedNFT.traits.faceColor)}
-                  />
-                  
-                  {/* Eye */}
-                  <path 
-                    d="M647.25 255.71v317.7h-10.63v-119.7H445.89V266.34H330.22v-10.63z" 
-                    fill={getEyeColor(generatedNFT.traits.artStyle, generatedNFT.traits.faceColor)}
-                  />
-                  
-                  {/* Circle border */}
-                  <circle 
-                    cx="668.5" 
-                    cy="668.5" 
-                    r="628" 
-                    strokeWidth="10"
-                    stroke={generatedNFT.traits.artStyle === ArtStyle.GOLD_SILVER 
-                      ? (generatedNFT.traits.faceColor === 'Gold' ? '#FFD700' : '#C0C0C0') 
-                      : '#FDD835'}
-                    fill="none"
-                  />
-                </svg>
-                
-                {/* Optional: Simple glitch effect */}
-                {generatedNFT.traits.hasGlitch && (
-                  <div className="absolute inset-0" style={{ 
-                    mixBlendMode: 'color-dodge',
-                    filter: 'drop-shadow(3px 3px 0 red) drop-shadow(-3px -3px 0 cyan)',
-                    opacity: 0.5
-                  }}></div>
-                )}
-              </div>
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center bg-black text-white/50">
-                Initializing generator...
-              </div>
-            )}
+        {/* Info/Controls column */}
+        <div className="md:col-span-5 flex flex-col">
+          <h2 className="text-2xl font-bold text-white mb-4">Bauhaus Signet</h2>
+          <p className="text-white/70 mb-6">
+            Each NFT features a unique generative signet inspired by the principles of
+            Bauhaus design and the work of Oskar Schlemmer.
+          </p>
+          
+          <div className="mb-6 bg-white/5 rounded-md p-4">
+            <h3 className="text-lg font-medium text-white mb-2">About This Collection</h3>
+            <ul className="text-white/70 text-sm space-y-2">
+              <li className="flex items-start">
+                <span className="text-primary mr-2">•</span>
+                <span>1,888 unique pieces commemorating Schlemmer&apos;s birth year</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#1E88E5] mr-2">•</span>
+                <span>Generative art with Bauhaus principles</span>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#FDD835] mr-2">•</span>
+                <span>Minted on Ethereum</span>
+              </li>
+            </ul>
           </div>
           
-          {/* Generate and Mint buttons */}
-          <div className="w-[400px] space-y-4">
-            <button 
-              className="w-full px-6 py-4 bg-black border border-white/20 hover:border-primary/60 text-white font-medium uppercase tracking-wider flex items-center justify-center space-x-2 transition-colors"
-              onClick={() => {
-                // Force full regeneration with each click
-                console.log("Generate button clicked");
-                generateRandomNFT();
-              }}
-              disabled={isGenerating}
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              <span>Generate Random Variation</span>
-            </button>
-            
-            {/* Mint button */}
-            <button 
-              className="w-full px-6 py-4 bg-primary/10 border border-primary hover:bg-primary/20 text-white font-medium uppercase tracking-wider flex items-center justify-center transition-colors"
-              disabled={isGenerating || !generatedNFT}
-              onClick={() => {
-                if (generatedNFT) {
-                  console.log("Mint button clicked");
-                  // This would connect to wallet and mint NFT in a real implementation
-                  alert("This would mint the Bauhaus Signet in a real implementation");
-                }
-              }}
-            >
-              <span>Mint Bauhaus Signet</span>
-            </button>
+          <div className="flex-1"></div>
+          
+          <div className="space-y-4 mt-auto">
+            <div className="text-white/70 text-sm">
+              Price: <span className="text-white font-medium">0.08 ETH</span>
+            </div>
+            {isConnected && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="p-3 bg-white/5 rounded border border-white/10 text-sm text-white/80"
+              >
+                Your unique Bauhaus signet is ready to mint. Each piece honors the legacy of Oskar Schlemmer through geometric abstraction and bold colors.
+              </motion.div>
+            )}
           </div>
         </div>
       </div>
+      
+      {/* Toasts */}
+      <TransactionToast 
+        showSuccess={mintSuccess}
+        showError={!!mintError}
+        transactionHash={mintTxHash}
+        errorMessage={mintError || "Transaction failed"}
+      />
     </div>
   );
 }

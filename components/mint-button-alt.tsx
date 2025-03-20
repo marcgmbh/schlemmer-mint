@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAccount } from 'wagmi';
+import { useMint } from '@/hooks/use-mint';
+import { useAppKit } from '@/hooks/use-appkit';
 
 export function MintButtonAlt() {
   const [isHovered, setIsHovered] = useState(false);
@@ -9,6 +12,15 @@ export function MintButtonAlt() {
   const [initialAnimation, setInitialAnimation] = useState(true);
   const [mintedCount, setMintedCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  
+  const { isConnected } = useAccount();
+  const { 
+    handleMint,
+    isMinting,
+    isSaleActive
+  } = useMint();
+  
+  const { open } = useAppKit();
   
   const MAX_NFTS = 1888; // Commemorating Schlemmer's birth year
   const REMAINING = MAX_NFTS - mintedCount;
@@ -54,6 +66,21 @@ export function MintButtonAlt() {
     
     fetchMintCount();
   }, []);
+  
+  // Handle button click - either mint or prompt wallet connection
+  const handleButtonClick = async () => {
+    console.log('Button clicked!');
+    if (isConnected) {
+      handleMint();
+    } else {
+      // Open the AppKit modal to connect wallet
+      try {
+        open({ view: 'Connect' });
+      } catch (error) {
+        console.error('Error opening wallet modal:', error);
+      }
+    }
+  };
   
   return (
     <div className="mint-container relative max-w-md mx-auto">
@@ -103,7 +130,8 @@ export function MintButtonAlt() {
           onMouseLeave={() => setIsHovered(false)}
           onMouseDown={() => setIsActive(true)}
           onMouseUp={() => setIsActive(false)}
-          onClick={() => alert('Mint functionality will be connected soon')}
+          onClick={handleButtonClick}
+          disabled={isConnected && (isMinting || !isSaleActive)}
         >
           <motion.div 
             className="relative z-10 flex flex-col items-center justify-center"
@@ -118,7 +146,16 @@ export function MintButtonAlt() {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6 }}
               >
-                MINT YOUR BAUHAUS SIGNET
+                {isConnected && isMinting ? (
+                  <span className="flex items-center justify-center">
+                    <div className="w-5 h-5 mr-3 animate-spin border-2 border-white border-t-transparent rounded-full"></div>
+                    MINTING...
+                  </span>
+                ) : isConnected && !isSaleActive ? (
+                  "SALE NOT ACTIVE"
+                ) : (
+                  "MINT YOUR BAUHAUS SIGNET"
+                )}
                 <motion.div 
                   className="absolute -bottom-2 left-0 h-0.5 bg-primary"
                   initial={{ width: '0%' }}
@@ -176,7 +213,7 @@ export function MintButtonAlt() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
         >
-          Commemorating 1888, Oskar Schlemmer's Birth Year
+          Commemorating 1888, Oskar Schlemmer&apos;s Birth Year
         </motion.div>
         
         <motion.div 

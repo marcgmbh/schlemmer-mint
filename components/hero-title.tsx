@@ -1,18 +1,41 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
-import { motion, useAnimation, useInView } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+
+// Simple implementation of useInView using Intersection Observer
+function useIntersectionObserver(ref: React.RefObject<HTMLElement>): boolean {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  
+  useEffect(() => {
+    if (!ref.current) return;
+    
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting);
+      }
+    );
+    
+    observer.observe(ref.current);
+    
+    return () => {
+      observer.disconnect();
+    };
+  }, [ref]);
+  
+  return isIntersecting;
+}
 
 export default function HeroTitle() {
-  const controls = useAnimation();
   const ref = useRef(null);
-  const inView = useInView(ref);
+  const inView = useIntersectionObserver(ref);
+  const [isVisible, setIsVisible] = useState(false);
   
   useEffect(() => {
     if (inView) {
-      controls.start("visible");
+      setIsVisible(true);
     }
-  }, [controls, inView]);
+  }, [inView]);
   
   // Enhanced animation variants
   const titleVariants = {
@@ -57,7 +80,7 @@ export default function HeroTitle() {
           variants={geometricVariants}
           custom={1}
           initial="hidden"
-          animate={controls}
+          animate={isVisible ? "visible" : "hidden"}
           transition={{ delay: 0.8 }}
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
@@ -67,38 +90,29 @@ export default function HeroTitle() {
         <motion.div 
           className="absolute top-1/4 right-0 w-16 h-1 bg-[#1E88E5]"
           initial={{ scaleX: 0 }}
-          animate={controls}
-          variants={{
-            hidden: { scaleX: 0, opacity: 0 },
-            visible: { scaleX: 1, opacity: 0.7, transition: { duration: 0.6, delay: 1.2 } }
-          }}
+          animate={isVisible ? { scaleX: 1, opacity: 0.7 } : { scaleX: 0, opacity: 0 }}
+          transition={{ duration: 0.6, delay: 1.2 }}
         />
         
         <motion.div 
           className="absolute bottom-0 left-1/3 w-1 h-12 bg-[#FDD835]"
           initial={{ scaleY: 0 }}
-          animate={controls}
-          variants={{
-            hidden: { scaleY: 0, opacity: 0 },
-            visible: { scaleY: 1, opacity: 0.7, transition: { duration: 0.6, delay: 1.5 } }
-          }}
+          animate={isVisible ? { scaleY: 1, opacity: 0.7 } : { scaleY: 0, opacity: 0 }}
+          transition={{ duration: 0.6, delay: 1.5 }}
         />
         
         <motion.div
           className="absolute top-1/2 -left-4 w-2 h-2 rounded-full bg-primary"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { opacity: 0.7, transition: { duration: 0.3, delay: 1.7 } }
-          }}
-          initial="hidden"
-          animate={controls}
+          initial={{ opacity: 0 }}
+          animate={isVisible ? { opacity: 0.7 } : { opacity: 0 }}
+          transition={{ duration: 0.3, delay: 1.7 }}
         />
       </div>
       
       <motion.div
         variants={titleVariants}
         initial="hidden"
-        animate={controls}
+        animate={isVisible ? "visible" : "hidden"}
         className="relative z-10"
       >
         <h1 className="text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold tracking-tighter leading-none">

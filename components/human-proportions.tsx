@@ -30,8 +30,8 @@ export default function HumanProportions() {
             <div className="bg-black/40 p-6 border-t-2 border-primary">
               <h3 className="text-xl font-bold mb-4 text-white">Measurement & Proportion</h3>
               <p className="text-gray-300">
-                Schlemmer's work celebrated the human body as the ultimate source of proportion 
-                and measurement, informing all design decisions in the Bauhaus movement.
+                Schlemmer&apos;s work celebrated the human body&apos;s proportions and movements,
+                influencing all design decisions in the Bauhaus movement.
               </p>
               <div className="mt-4 h-32 flex items-center justify-center relative">
                 <div className="w-0.5 h-full bg-white/20 absolute"></div>
@@ -70,7 +70,7 @@ export default function HumanProportions() {
             <div className="bg-black/40 p-6 border-t-2 border-yellow-500">
               <h3 className="text-xl font-bold mb-4 text-white">Human & Environment</h3>
               <p className="text-gray-300">
-                The Bauhaus Signet epitomizes Schlemmer's exploration of the relationship 
+                The Bauhaus Signet epitomizes Schlemmer&apos;s exploration of the relationship 
                 between the human form and its surrounding space and architecture.
               </p>
               <div className="mt-4 h-32 flex items-center justify-center relative">

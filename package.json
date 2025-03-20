@@ -16,6 +16,10 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.1",
     "@rainbow-me/rainbowkit": "^2.1.5",
+    "@reown/appkit": "^1.7.0",
+    "@reown/appkit-adapter-wagmi": "^1.7.0",
+    "@tanstack/react-query": "^5.69.0",
+    "@wagmi/connectors": "^5.7.11",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "ethers": "^5.7.2",
@@ -27,8 +31,8 @@
     "react-dom": "^18.2.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
-    "viem": "^2.21.1",
-    "wagmi": "^2.12.8"
+    "viem": "^2.23.13",
+    "wagmi": "^2.14.15"
   },
   "devDependencies": {
     "@types/node": "20.17.24",

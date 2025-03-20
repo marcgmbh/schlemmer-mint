@@ -13,7 +13,7 @@ export default function Footer() {
           <div>
             <h3 className="text-xl font-bold mb-4 text-primary">Bauhaus Signet</h3>
             <p className="text-gray-400 mb-4">
-              A digital collectible preserving Oskar Schlemmer's iconic 1922 design, 
+              A digital collectible preserving Oskar Schlemmer&apos;s iconic 1922 design, 
               celebrating the intersection of human form and geometric abstraction.
             </p>
           </div>

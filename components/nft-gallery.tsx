@@ -1,8 +1,31 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+
+// Custom hook to replace framer-motion's useInView
+const useIntersectionObserver = (ref: React.RefObject<HTMLElement>, options = {}): boolean => {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    
+    const element = ref.current; // Store ref.current in a variable
+    
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsIntersecting(entry.isIntersecting);
+    }, options);
+    
+    observer.observe(element);
+    
+    return () => {
+      observer.unobserve(element);
+    };
+  }, [ref, options]);
+
+  return isIntersecting;
+};
 
 interface NFT {
   identifier: string;
@@ -20,7 +43,7 @@ export default function NFTGallery() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useIntersectionObserver(ref, { threshold: 0.1 });
   
   // Sample filters - these would be dynamic in a real app
   const filters = [
@@ -180,7 +203,7 @@ export default function NFTGallery() {
           </h2>
           
           <p className="text-xl text-gray-300 max-w-2xl mx-auto font-light leading-relaxed">
-            Explore the NFT collection that preserves Schlemmer's geometric human forms as digital artifacts,
+            Explore the NFT collection that preserves Schlemmer&apos;s geometric human forms as digital artifacts,
             each limited to only <span className="text-white font-medium">1888</span> editions.
           </p>
           
@@ -356,7 +379,7 @@ export default function NFTGallery() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", damping: 20 }}
-              onClick={e => e.stopPropagation()}
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
             >
               {/* Decorative frame */}
               <motion.div 
@@ -408,10 +431,9 @@ export default function NFTGallery() {
                     <div className="space-y-5">
                       <div>
                         <h4 className="text-white text-xl mb-3 font-light">About this Artwork</h4>
-                        <p className="text-gray-300 leading-relaxed">
-                          This Bauhaus Signet NFT embodies Oskar Schlemmer's philosophy of geometric human form,
-                          preserved as a digital collectible on the Ethereum blockchain. Each piece carries the 
-                          legacy of Schlemmer's revolutionary approach to design and form.
+                        <p className="text-white/70">
+                          The Bauhaus Signet NFT is a digital collectible representing Oskar Schlemmer&apos;s 
+                          iconic 1923 Bauhaus logo design.
                         </p>
                       </div>
                       

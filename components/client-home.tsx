@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Footer from "./footer";
 import HeroTitle from "./hero-title";
 import { SignetExplanation } from "./signet-explanation";
@@ -14,10 +14,12 @@ import { BauhausSignet } from "./bauhaus-signet";
 import HeroDescription from "./hero-description";
 import SchlemmerQuote from "./schlemmer-quote";
 import BauhausGenerator from "./bauhaus-generator";
+import { useAccount } from 'wagmi';
 
 export default function ClientHome() {
   const [isClient, setIsClient] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { isConnected } = useAccount();
   
   // Define refs for sections
   const heroRef = useRef<HTMLDivElement>(null);
@@ -32,6 +34,7 @@ export default function ClientHome() {
 
   useEffect(() => {
     setIsClient(true);
+    console.log("ClientHome mounted, wallet connection status:", isConnected);
     
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
@@ -39,7 +42,7 @@ export default function ClientHome() {
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isConnected]);
 
   if (!isClient) return null;
 
@@ -76,6 +79,19 @@ export default function ClientHome() {
               <span className="ml-2 text-sm uppercase tracking-wide text-white/70 group-hover:text-white transition-colors duration-300">Archives</span>
             </div>
           </Link>
+          
+          {/* Wallet Connection Status */}
+          {isConnected ? (
+            <div className="text-sm py-1 px-3 bg-primary/10 border border-primary/30 text-white/90 rounded-sm flex items-center">
+              <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
+              Wallet Connected
+            </div>
+          ) : (
+            <div className="text-sm py-1 px-3 bg-white/5 border border-white/10 text-white/50 rounded-sm flex items-center">
+              <div className="w-2 h-2 bg-white/20 rounded-full mr-2"></div>
+              Wallet Not Connected
+            </div>
+          )}
           
           {/* Simplified Bauhaus color blocks */}
           <div className="flex items-center space-x-1.5">
@@ -258,7 +274,7 @@ export default function ClientHome() {
                   <div className="border-t border-[#1E88E5]/30 pt-8">
                     <h3 className="text-xl uppercase tracking-wide mb-6 font-light text-[#1E88E5]">The Archives</h3>
                     <p className="text-white/60 mb-8 leading-relaxed">
-                    The Oskar Schlemmer Theatre Archives is dedicated to preserving and promoting Schlemmer's legacy,
+                      The Oskar Schlemmer Theatre Archives is dedicated to preserving and promoting Schlemmer&apos;s legacy,
                       the archives maintain his works and support the study of his
                       contributions to art and design.
                     </p>
@@ -278,7 +294,7 @@ export default function ClientHome() {
                   <div className="border-t border-[#FDD835]/30 pt-8">
                     <h3 className="text-xl uppercase tracking-wide mb-6 font-light text-[#FDD835]">Support the Studio</h3>
                     <p className="text-white/60 mb-8 leading-relaxed">
-                      Help preserve Schlemmer's studio for future generations and 
+                      Help preserve Schlemmer&apos;s studio for future generations and 
                       support ongoing research into Bauhaus design principles.
                     </p>
                     <Link 

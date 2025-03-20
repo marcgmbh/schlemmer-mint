@@ -1,19 +1,23 @@
-import type { Metadata } from "next";
+import { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./providers";
 import ErrorBoundary from "@/components/error-boundary";
+import { ModalInitializer } from "./modal-initializer";
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Bauhaus Signet - Schlemmer",
-  description: " The Bauhaus Signet NFT, originally created in 1923 by Oskar Schlemmer, is an authorized collaboration with The Oskar Schlemmer Theatre Archives that brings a seminal work of 20th-century design into the blockchain era. The iconic Bauhaus signet will persist on Ethereum forever, as fully onchain generative SVG renditions.",
+  title: "Bauhaus Signet",
+  description: "Mint your own unique Bauhaus Signet NFT",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <head>
@@ -35,10 +39,12 @@ export default function RootLayout({
           }
         ` }} />
       </head>
-      <body>
+      <body className={inter.className}>
         <ErrorBoundary>
           <Providers>
+            <ModalInitializer />
             {children}
+            <div id="wallet-dialog-container"></div>
           </Providers>
         </ErrorBoundary>
         <Toaster />

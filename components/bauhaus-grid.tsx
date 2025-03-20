@@ -24,6 +24,8 @@ export default function BauhausGrid() {
     
     // Draw Bauhaus-inspired grid with human proportions
     function drawGrid() {
+      if (!ctx || !canvas) return;
+      
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       // Draw primary grid

@@ -14,7 +14,7 @@ const faqItems: FAQItem[] = [
     answer: (
       <div className="space-y-2">
         <p>
-          The Bauhaus Signet NFT is a digital collectible representing Oskar Schlemmer's 
+          The Bauhaus Signet NFT is a digital collectible representing Oskar Schlemmer&apos;s 
           iconic 1923 Bauhaus logo design - now preserved on the blockchain as fully onchain SVG renditions.
         </p>
         <p>
@@ -30,10 +30,10 @@ const faqItems: FAQItem[] = [
       <div className="space-y-2">
         <p>
           This is an authorized collaboration with The Oskar Schlemmer Theatre Archives, 
-          ensuring authenticity and respect for Schlemmer's original work.
+          ensuring authenticity and respect for Schlemmer&apos;s original work.
         </p>
         <p>
-          A portion of all proceeds supports the preservation of Schlemmer's legacy and helps 
+          A portion of all proceeds supports the preservation of Schlemmer&apos;s legacy and helps 
           fund ongoing efforts to save his studio space for future generations.
         </p>
       </div>
@@ -65,7 +65,7 @@ const faqItems: FAQItem[] = [
         </p>
         <p>
           You become part of a community of art history enthusiasts and collectors supporting 
-          the preservation of Schlemmer's work and Bauhaus design heritage.
+          the preservation of Schlemmer&apos;s work and Bauhaus design heritage.
         </p>
       </div>
     )
@@ -79,7 +79,7 @@ const faqItems: FAQItem[] = [
           to support their preservation and educational efforts.
         </p>
         <p>
-          Part of the proceeds also funds the campaign to save Schlemmer's original studio space, which is 
+          Part of the proceeds also funds the campaign to save Schlemmer&apos;s original studio space, which is 
           currently at risk of being lost to commercial development.
         </p>
       </div>

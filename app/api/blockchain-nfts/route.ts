@@ -1,6 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getTokenIds, getTokenMetadata } from '@/utils/blockchain';
 
+interface MetadataResult {
+  id: number;
+  metadata: any | null;
+  error?: boolean;
+}
+
 export async function GET() {
   try {
     const tokenIds = await getTokenIds(12); // Limit to 12 tokens
@@ -17,7 +23,7 @@ export async function GET() {
     );
     
     const results = await Promise.all(metadataPromises);
-    const tokens = results.filter(result => !result.error);
+    const tokens = results.filter((result: MetadataResult) => !result.error);
     
     return NextResponse.json({ tokens });
   } catch (error) {
