@@ -192,36 +192,7 @@ export default function ClientHome() {
           </div>
         </section>
         
-        {/* Bauhaus Generator Section */}
-        <section className="py-32 relative">
-          <div className="absolute left-0 top-0 w-1 h-24 bg-primary"></div>
-          <div className="container mx-auto px-6 lg:px-8">
-            <div className="relative max-w-6xl mx-auto">
-              {/* Generator header */}
-              <div className="mb-16 flex items-center">
-                <motion.div 
-                  className="w-12 h-px bg-primary mr-4"
-                  initial={{ width: 0 }}
-                  whileInView={{ width: 48 }}
-                  transition={{ duration: 0.6 }}
-                  viewport={{ once: true }}
-                />
-                <motion.h2 
-                  className="text-3xl font-light uppercase tracking-wide"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
-                  transition={{ duration: 0.5 }}
-                  viewport={{ once: true }}
-                >
-                  Generate Your Own
-                </motion.h2>
-              </div>
-              
-              <BauhausGenerator />
-            </div>
-          </div>
-        </section>
-        
+
         {/* FAQ Section - Reimagined with Bauhaus style */}
         <section className="py-32 relative">
           <div className="absolute right-0 top-0 w-1 h-24 bg-[#1E88E5]"></div>

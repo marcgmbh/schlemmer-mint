@@ -22,6 +22,8 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/ujq2bhe.css" />
+        <link rel="preload" href="/bauhaus-masters.jpg" as="image" />
+        <link rel="preload" href="/bauhaus-signet-stamp.jpg" as="image" />
         <style dangerouslySetInnerHTML={{ __html: `
           @font-face {
             font-family: 'century-gothic';

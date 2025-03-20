@@ -99,6 +99,7 @@ export function SignetExplanation() {
               alt="Historical photo of Bauhaus masters" 
               width={600}
               height={400}
+              priority
               className="w-full object-cover transition-all duration-500 hover:scale-105"
             />
           </div>
@@ -114,6 +115,7 @@ export function SignetExplanation() {
               alt="Official Bauhaus signet stamp" 
               width={400}
               height={400}
+              priority
               className="w-4/5 max-h-48 object-contain transition-all duration-500 hover:scale-105"
             />
           </div>

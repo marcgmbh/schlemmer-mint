@@ -80,6 +80,7 @@ export default function AboutContent() {
                   alt="The original Bauhaus signet designed by Oskar Schlemmer" 
                   width={500}
                   height={500}
+                  priority
                   className="w-full h-auto"
                 />
                 <div className="mt-2 text-sm text-white/60 text-center">
@@ -121,6 +122,7 @@ export default function AboutContent() {
                   alt="Bauhaus masters including Oskar Schlemmer" 
                   width={800}
                   height={500}
+                  priority
                   className="w-full h-auto"
                 />
                 <div className="mt-2 text-sm text-white/60 text-center">
