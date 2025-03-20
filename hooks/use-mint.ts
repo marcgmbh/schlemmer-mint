@@ -3,8 +3,8 @@ import { useAccount, useReadContract, useWriteContract, useWaitForTransactionRec
 import { parseEther } from 'viem';
 import { BAUHAUS_CONTRACT_ADDRESS, BAUHAUS_ABI } from '@/utils/blockchain';
 
-// Get mint price from environment variable or default to 0.1 ETH
-const MINT_PRICE = process.env.NEXT_PUBLIC_MINT_PRICE || '0.1';
+// Get mint price from environment variable or default to 0.0888ETH
+const MINT_PRICE = process.env.NEXT_PUBLIC_MINT_PRICE || '0.0888';
 
 export function useMint() {
   const [isMinting, setIsMinting] = useState(false);
