@@ -7,10 +7,11 @@ export function MintButtonAlt() {
   const [isHovered, setIsHovered] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [initialAnimation, setInitialAnimation] = useState(true);
+  const [mintedCount, setMintedCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   
-  const MAX_NFTS = 1888;
-  const CURRENT_MINTED = 562; // Example value - would be fetched from contract
-  const REMAINING = MAX_NFTS - CURRENT_MINTED;
+  const MAX_NFTS = 1888; // Commemorating Schlemmer's birth year
+  const REMAINING = MAX_NFTS - mintedCount;
   
   // Bauhaus primary colors
   const bauhausColors = {
@@ -26,6 +27,32 @@ export function MintButtonAlt() {
     }, 2000);
     
     return () => clearTimeout(timer);
+  }, []);
+  
+  // Fetch the latest mint count from the contract or API
+  useEffect(() => {
+    async function fetchMintCount() {
+      try {
+        setIsLoading(true);
+        // In a real implementation, you would fetch this from the contract or API
+        // For demo purposes, we'll simulate a random progress between 100-400 minted NFTs
+        // Remove this simulation and implement the actual API call in production
+        const simulatedMintedCount = Math.floor(Math.random() * 300) + 100;
+        
+        // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        setMintedCount(simulatedMintedCount);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching mint count:", error);
+        // Fallback to a default value if there's an error
+        setMintedCount(188); // 10% minted as fallback
+        setIsLoading(false);
+      }
+    }
+    
+    fetchMintCount();
   }, []);
   
   return (
@@ -101,7 +128,7 @@ export function MintButtonAlt() {
               </motion.span>
             </div>
             
-            {/* Clear remaining NFTs display */}
+            {/* Clear remaining NFTs display - now with loading state */}
             <motion.div 
               className="flex items-center justify-center mt-2 p-2 bg-white/5"
               initial={{ opacity: 0 }}
@@ -109,10 +136,16 @@ export function MintButtonAlt() {
               transition={{ delay: 0.4 }}
             >
               <div className="flex items-center">
-                <span className="text-white font-bold text-xl mr-2">{REMAINING}</span>
-                <span className="text-white/70 text-lg mr-2">of</span>
-                <span className="text-white font-bold text-xl mr-2">{MAX_NFTS}</span>
-                <span className="text-white/70 text-base">NFTs Remaining</span>
+                {isLoading ? (
+                  <span className="text-white/70 text-base">Loading mint count...</span>
+                ) : (
+                  <>
+                    <span className="text-white font-bold text-xl mr-2">{REMAINING.toLocaleString()}</span>
+                    <span className="text-white/70 text-lg mr-2">of</span>
+                    <span className="text-white font-bold text-xl mr-2">{MAX_NFTS.toLocaleString()}</span>
+                    <span className="text-white/70 text-base">NFTs Remaining</span>
+                  </>
+                )}
               </div>
             </motion.div>
           </motion.div>
@@ -152,12 +185,28 @@ export function MintButtonAlt() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.4 }}
         >
-          <motion.div
-            className="h-full bg-gradient-to-r from-primary via-[#1E88E5] to-[#FDD835]"
-            initial={{ width: 0 }}
-            animate={{ width: `${(CURRENT_MINTED / MAX_NFTS) * 100}%` }}
-            transition={{ duration: 1.8, delay: 1.6 }}
-          />
+          {isLoading ? (
+            <motion.div
+              className="h-full bg-gradient-to-r from-primary via-[#1E88E5] to-[#FDD835]"
+              initial={{ width: "20%" }}
+              animate={{ 
+                width: ["20%", "40%", "20%"],
+                opacity: [0.5, 0.8, 0.5]
+              }}
+              transition={{ 
+                duration: 1.5, 
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
+            />
+          ) : (
+            <motion.div
+              className="h-full bg-gradient-to-r from-primary via-[#1E88E5] to-[#FDD835]"
+              initial={{ width: 0 }}
+              animate={{ width: `${(mintedCount / MAX_NFTS) * 100}%` }}
+              transition={{ duration: 1.8, delay: 0.2 }}
+            />
+          )}
         </motion.div>
       </div>
     </div>

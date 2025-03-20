@@ -55,7 +55,7 @@ export function SignetExplanation() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            The Bauhaus Signet was designed by Oskar Schlemmer in 1922 and became the iconic symbol of the revolutionary art school. Schlemmer's design embodies the Bauhaus philosophy: a harmonious blend of art and technology, with clean geometric forms arranged in perfect balance.
+            The Bauhaus Signet was designed by Oskar Schlemmer in 1923 and became the iconic symbol of the revolutionary art school. Schlemmer's design embodies the Bauhaus philosophy: a harmonious blend of art and technology, with clean geometric forms arranged in perfect balance.
           </motion.p>
           
           <motion.p 

@@ -433,11 +433,11 @@ export default function BauhausGenerator() {
           <h2 className="text-3xl md:text-4xl font-light text-white mb-4">Generate Your Own Signet</h2>
           <p className="text-white/70 max-w-2xl mx-auto">
             Explore official Bauhaus Signet variations from the Ethereum contract. 
-            Generate limited random combinations matching the onchain collection that honors Oskar Schlemmer's iconic design.
+            Generate random combinations matching the on-chain collection that honors Oskar Schlemmer's iconic design.
           </p>
         </div>
         
-        {/* Simplified layout - Just SVG and Generate button */}
+        {/* Simplified layout - Just SVG and buttons */}
         <div className="flex flex-col items-center space-y-8">
           {/* SVG Preview - Larger size (400px) */}
           <div className="relative w-[400px] h-[400px] border border-white/10">
@@ -528,7 +528,7 @@ export default function BauhausGenerator() {
             )}
           </div>
           
-          {/* Just the Generate button and Mint button */}
+          {/* Generate and Mint buttons */}
           <div className="w-[400px] space-y-4">
             <button 
               className="w-full px-6 py-4 bg-black border border-white/20 hover:border-primary/60 text-white font-medium uppercase tracking-wider flex items-center justify-center space-x-2 transition-colors"
