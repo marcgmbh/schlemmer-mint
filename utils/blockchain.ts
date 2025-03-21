@@ -11,8 +11,8 @@ const MINIMAL_ERC721_ABI = [
 ];
 
 // Get contract address from environment variable or use a default
-// Using a placeholder default address to prevent build errors
-const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0x8f99d2f45EB3b2f3319144aa8dF9E7cbA566a261';
+// Using the actual contract address provided
+const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0x2fb65031a2269de88ca6109cfce61b3cc58b7012';
 
 // Bauhaus Signet contract address
 export const BAUHAUS_CONTRACT_ADDRESS = contractAddress as `0x${string}`;

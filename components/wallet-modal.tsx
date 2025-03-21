@@ -46,9 +46,6 @@ export function WalletModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                 className="px-6 py-4 bg-black border border-white/20 text-white hover:border-primary/60 hover:bg-black/50 transition-all flex items-center justify-between"
               >
                 <span className="text-lg">{connector.name}</span>
-                {!connector.ready && (
-                  <span className="text-sm text-gray-500">(click to try)</span>
-                )}
                 {isPending && <span className="animate-spin">⏳</span>}
               </button>
             ))}
