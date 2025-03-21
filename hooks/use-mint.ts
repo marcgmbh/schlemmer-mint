@@ -50,7 +50,7 @@ export function useMint() {
     if (!isConnected) {
       console.log('Wallet not connected');
       setMintError('Please connect your wallet first.');
-      return;
+      throw new Error('Wallet not connected');
     }
     
     try {
@@ -79,11 +79,13 @@ export function useMint() {
       
       // Transaction was submitted successfully
       setMintSuccess(true);
+      return hash; // Return the transaction hash
     } catch (error) {
       console.error('Mint error:', error);
       const errorMessage = error instanceof Error ? error.message : 'There was an error minting. Please try again.';
       setMintError(errorMessage);
       setMintSuccess(false);
+      throw error; // Re-throw the error to be handled by the caller
     } finally {
       setIsMinting(false);
     }

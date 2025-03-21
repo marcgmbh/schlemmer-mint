@@ -1,20 +1,43 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useConnect, useAccount } from 'wagmi';
 import { X } from 'lucide-react';
 
 export function WalletModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const { connectors, connect, isPending, error: connectError } = useConnect();
   const { isConnected } = useAccount();
+  const prevConnectedRef = useRef(isConnected);
 
-  // Close if connected
+  // Enhanced connection state tracking
+  useEffect(() => {
+    console.log('Connection state changed:', { wasConnected: prevConnectedRef.current, isNowConnected: isConnected });
+    
+    // Only close if we've just connected (transition from disconnected to connected)
+    if (!prevConnectedRef.current && isConnected && isOpen) {
+      console.log('Wallet just connected, closing modal');
+      // Force close with a small delay to ensure UI updates
+      setTimeout(() => {
+        console.log('Executing delayed close');
+        onClose();
+      }, 500);
+    }
+    
+    // Update ref for next render
+    prevConnectedRef.current = isConnected;
+  }, [isConnected, onClose, isOpen]);
+
+  // Backup forced close - if modal is open and user is connected, close it
   useEffect(() => {
     if (isConnected && isOpen) {
-      console.log('Wallet connected, closing modal');
-      setTimeout(() => onClose(), 300);
+      const timer = setTimeout(() => {
+        console.log('Backup close triggered: user is connected but modal still open');
+        onClose();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
     }
-  }, [isConnected, onClose, isOpen]);
+  }, [isConnected, isOpen, onClose]);
 
   if (!isOpen) return null;
 

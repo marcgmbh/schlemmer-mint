@@ -42,7 +42,6 @@ export function MintModal({
     <>
       <div 
         className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50"
-        onClick={onClose}
       />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md">
         <motion.div 
@@ -51,6 +50,7 @@ export function MintModal({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.3 }}
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
         >
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl text-white">Mint Bauhaus Signet</h2>
@@ -98,7 +98,10 @@ export function MintModal({
           </div>
           
           <button
-            onClick={() => onMint(quantity)}
+            onClick={() => {
+              console.log('Mint Now button clicked with quantity:', quantity);
+              onMint(quantity);
+            }}
             className="w-full py-4 bg-primary text-white font-bold text-lg hover:bg-primary/90 transition-colors rounded"
           >
             Mint Now

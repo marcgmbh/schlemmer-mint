@@ -106,9 +106,17 @@ export function MintButtonAlt() {
   };
   
   // Handle minting with quantity
-  const handleMintWithQuantity = (quantity: number) => {
-    console.log(`Minting ${quantity} NFTs`);
-    handleMint(quantity);
+  const handleMintWithQuantity = async (quantity: number) => {
+    console.log(`MintButton: Initiating mint of ${quantity} NFTs`);
+    try {
+      await handleMint(quantity);
+      console.log('Mint initiated successfully');
+    } catch (error) {
+      console.error('Error in handleMintWithQuantity:', error);
+      // Keep the modal open if there's an error
+      return;
+    }
+    // Only close the modal after successful initiation
     setIsMintModalOpen(false);
   };
   
