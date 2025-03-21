@@ -6,6 +6,7 @@ import { Providers } from "./providers";
 import ErrorBoundary from "@/components/error-boundary";
 import { ModalInitializer } from "./modal-initializer";
 import { WalletDialogProvider } from "@/components/wallet-dialog-provider";
+import { WalletProvider } from "@/components/wallet-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -47,7 +48,9 @@ export default function RootLayout({
           <Providers>
             <ModalInitializer />
             <WalletDialogProvider />
-            {children}
+            <WalletProvider>
+              {children}
+            </WalletProvider>
             <div id="wallet-dialog-container"></div>
           </Providers>
         </ErrorBoundary>

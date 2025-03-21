@@ -17,153 +17,73 @@ const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0x8f99d2f45
 // Bauhaus Signet contract address
 export const BAUHAUS_CONTRACT_ADDRESS = contractAddress as `0x${string}`;
 
-// Create public client
-const publicClient = createPublicClient({
+// Create a public client for interacting with the blockchain
+export const publicClient = createPublicClient({
   chain: mainnet,
   transport: http()
 });
 
+// Bauhaus ABI with the functions we need
 export const BAUHAUS_ABI = [
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "mintPublic",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "publicSaleActive",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "totalSupply",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "tokenURI",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "balanceOf",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "index",
-        "type": "uint256"
-      }
-    ],
-    "name": "tokenOfOwnerByIndex",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  }
-] as const;
+  // Read functions
+  'function balanceOf(address owner) external view returns (uint256)',
+  'function publicSaleActive() external view returns (bool)',
+  'function tokenURI(uint256 tokenId) external view returns (string)',
+  'function totalSupply() external view returns (uint256)',
+  
+  // Write functions
+  'function mintPublic(uint256 quantity) external payable',
+];
 
+// Function to get total supply
 export async function getTotalSupply(): Promise<number> {
   try {
-    const supply = await publicClient.readContract({
+    const totalSupply = await publicClient.readContract({
       address: BAUHAUS_CONTRACT_ADDRESS,
       abi: BAUHAUS_ABI,
       functionName: 'totalSupply',
     });
-    return Number(supply);
+    
+    return Number(totalSupply);
   } catch (error) {
-    console.error('Error getting total supply:', error);
-    throw error;
+    console.error('Error fetching total supply:', error);
+    return 0;
   }
 }
 
-export async function getTokenIds(limit: number = 20): Promise<number[]> {
+// Function to get token IDs for display
+export async function getTokenIds(limit: number = 10): Promise<number[]> {
   try {
-    const supply = await getTotalSupply();
-    const count = Math.min(supply, limit);
-    
+    const totalSupply = await getTotalSupply();
     const tokenIds: number[] = [];
-    for (let i = 0; i < count; i++) {
-      const tokenId = await publicClient.readContract({
-        address: BAUHAUS_CONTRACT_ADDRESS,
-        abi: BAUHAUS_ABI,
-        functionName: 'tokenOfOwnerByIndex',
-        args: [BAUHAUS_CONTRACT_ADDRESS, BigInt(i)],
-      });
-      tokenIds.push(Number(tokenId));
+    
+    // Get the most recently minted tokens (up to the limit)
+    const start = Math.max(0, totalSupply - limit);
+    const end = totalSupply;
+    
+    for (let i = start; i < end; i++) {
+      try {
+        const tokenId = await publicClient.readContract({
+          address: BAUHAUS_CONTRACT_ADDRESS,
+          abi: BAUHAUS_ABI,
+          functionName: 'tokenByIndex',
+          args: [BigInt(i)],
+        });
+        
+        tokenIds.push(Number(tokenId));
+      } catch (error) {
+        console.error(`Error fetching token at index ${i}:`, error);
+      }
     }
     
     return tokenIds;
   } catch (error) {
-    console.error('Error getting token IDs:', error);
-    throw error;
+    console.error('Error fetching token IDs:', error);
+    return [];
   }
 }
 
+// Function to get token metadata
 export async function getTokenMetadata(tokenId: number): Promise<any> {
   try {
     const tokenURI = await publicClient.readContract({
@@ -173,30 +93,19 @@ export async function getTokenMetadata(tokenId: number): Promise<any> {
       args: [BigInt(tokenId)],
     });
     
-    // If tokenURI is IPFS
-    if (tokenURI.startsWith('ipfs://')) {
-      const ipfsHash = tokenURI.replace('ipfs://', '');
-      const url = `https://ipfs.io/ipfs/${ipfsHash}`;
-      const response = await fetch(url);
-      return await response.json();
-    }
+    // If the URI is IPFS, convert to HTTP gateway URL
+    const formattedURI = (tokenURI as string).replace('ipfs://', 'https://ipfs.io/ipfs/');
     
-    // If tokenURI is HTTP
-    if (tokenURI.startsWith('http')) {
-      const response = await fetch(tokenURI);
-      return await response.json();
-    }
+    // Fetch the metadata from the URI
+    const response = await fetch(formattedURI);
+    const metadata = await response.json();
     
-    // If tokenURI is base64 encoded
-    if (tokenURI.startsWith('data:application/json;base64,')) {
-      const base64Data = tokenURI.replace('data:application/json;base64,', '');
-      const jsonString = atob(base64Data);
-      return JSON.parse(jsonString);
-    }
-    
-    throw new Error('Unsupported token URI format');
+    return {
+      id: tokenId,
+      ...metadata,
+    };
   } catch (error) {
-    console.error(`Error getting metadata for token ${tokenId}:`, error);
-    throw error;
+    console.error(`Error fetching metadata for token ${tokenId}:`, error);
+    return { id: tokenId, name: `Bauhaus Signet #${tokenId}`, error: 'Failed to load metadata' };
   }
 } 

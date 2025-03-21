@@ -80,12 +80,26 @@ export function MintButtonAlt() {
         
         // Also dispatch the event directly as a backup
         if (typeof window !== 'undefined') {
-          window.dispatchEvent(new Event('open-wallet-dialog'));
+          // Use a CustomEvent with more details to help debugging
+          const walletEvent = new CustomEvent('open-wallet-dialog', {
+            bubbles: true,
+            cancelable: true,
+            detail: { source: 'mint-button', timestamp: Date.now() }
+          });
+          
+          window.dispatchEvent(walletEvent);
+          console.log('Dispatched open-wallet-dialog event from mint button');
         }
       } catch (error) {
         console.error('Error opening wallet modal:', error);
         // Fallback if connection modal fails
-        window.dispatchEvent(new Event('open-wallet-dialog'));
+        const walletEvent = new CustomEvent('open-wallet-dialog', {
+          bubbles: true,
+          cancelable: true,
+          detail: { source: 'mint-button-fallback', timestamp: Date.now() }
+        });
+        
+        window.dispatchEvent(walletEvent);
       }
     }
   };
