@@ -11,9 +11,10 @@ export function WalletModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
   // Close if connected
   useEffect(() => {
     if (isConnected && isOpen) {
-      onClose();
+      console.log('Wallet connected, closing modal');
+      setTimeout(() => onClose(), 300);
     }
-  }, [isConnected, isOpen, onClose]);
+  }, [isConnected, onClose, isOpen]);
 
   if (!isOpen) return null;
 

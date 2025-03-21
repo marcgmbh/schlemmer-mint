@@ -27,6 +27,14 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { address, isConnected } = useAccount();
   
+  // Close modal when connected
+  useEffect(() => {
+    if (isConnected && isModalOpen) {
+      console.log('WalletProvider: User connected, closing modal');
+      setIsModalOpen(false);
+    }
+  }, [isConnected, isModalOpen]);
+  
   // Listen for custom events to open the modal
   useEffect(() => {
     const handleOpenModal = () => {

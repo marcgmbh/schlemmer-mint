@@ -17,6 +17,9 @@ const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || '0x2fb65031a
 // Bauhaus Signet contract address
 export const BAUHAUS_CONTRACT_ADDRESS = contractAddress as `0x${string}`;
 
+// Define mint price explicitly
+export const MINT_PRICE = '0.0888';
+
 // Create a public client for interacting with the blockchain
 export const publicClient = createPublicClient({
   chain: mainnet,

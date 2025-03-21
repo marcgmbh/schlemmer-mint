@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAccount } from 'wagmi';
 import { useMint } from '@/hooks/use-mint';
 import { useAppKit } from '@/hooks/use-appkit';
+import { WalletModal } from './wallet-modal';
+import { MintModal } from './mint-modal';
+import { useWallet } from './wallet-provider';
 
 export function MintButtonAlt() {
   const [isHovered, setIsHovered] = useState(false);
@@ -12,15 +15,18 @@ export function MintButtonAlt() {
   const [initialAnimation, setInitialAnimation] = useState(true);
   const [mintedCount, setMintedCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMintModalOpen, setIsMintModalOpen] = useState(false);
   
   const { isConnected } = useAccount();
   const { 
     handleMint,
     isMinting,
-    isSaleActive
+    isSaleActive,
+    mintPrice
   } = useMint();
   
   const { open } = useAppKit();
+  const { openWalletModal } = useWallet();
   
   const MAX_NFTS = 1888; // Commemorating Schlemmer's birth year
   const REMAINING = MAX_NFTS - mintedCount;
@@ -71,37 +77,39 @@ export function MintButtonAlt() {
   const handleButtonClick = async () => {
     console.log('Button clicked!');
     if (isConnected) {
-      handleMint();
+      // Open mint modal instead of directly minting
+      setIsMintModalOpen(true);
     } else {
-      // Open the AppKit modal to connect wallet
+      // Open wallet connection modal
+      console.log('Opening wallet connection modal');
+      openWalletModal(); // Use our custom wallet modal
+      
+      // Also try AppKit as backup
       try {
-        console.log('Opening wallet connection modal');
         open({ view: 'Connect' });
-        
-        // Also dispatch the event directly as a backup
-        if (typeof window !== 'undefined') {
-          // Use a CustomEvent with more details to help debugging
-          const walletEvent = new CustomEvent('open-wallet-dialog', {
-            bubbles: true,
-            cancelable: true,
-            detail: { source: 'mint-button', timestamp: Date.now() }
-          });
-          
-          window.dispatchEvent(walletEvent);
-          console.log('Dispatched open-wallet-dialog event from mint button');
-        }
       } catch (error) {
-        console.error('Error opening wallet modal:', error);
-        // Fallback if connection modal fails
+        console.error('Error opening AppKit modal:', error);
+      }
+      
+      // Also dispatch the event directly as a backup
+      if (typeof window !== 'undefined') {
         const walletEvent = new CustomEvent('open-wallet-dialog', {
           bubbles: true,
           cancelable: true,
-          detail: { source: 'mint-button-fallback', timestamp: Date.now() }
+          detail: { source: 'mint-button', timestamp: Date.now() }
         });
         
         window.dispatchEvent(walletEvent);
+        console.log('Dispatched open-wallet-dialog event from mint button');
       }
     }
+  };
+  
+  // Handle minting with quantity
+  const handleMintWithQuantity = (quantity: number) => {
+    console.log(`Minting ${quantity} NFTs`);
+    handleMint(quantity);
+    setIsMintModalOpen(false);
   };
   
   return (
@@ -153,7 +161,7 @@ export function MintButtonAlt() {
           onMouseDown={() => setIsActive(true)}
           onMouseUp={() => setIsActive(false)}
           onClick={handleButtonClick}
-          disabled={isConnected && (isMinting || !isSaleActive)}
+          disabled={isMinting}
         >
           <motion.div 
             className="relative z-10 flex flex-col items-center justify-center"
@@ -173,10 +181,10 @@ export function MintButtonAlt() {
                     <div className="w-5 h-5 mr-3 animate-spin border-2 border-white border-t-transparent rounded-full"></div>
                     MINTING...
                   </span>
-                ) : isConnected && !isSaleActive ? (
-                  "SALE NOT ACTIVE"
-                ) : (
+                ) : isConnected ? (
                   "MINT YOUR BAUHAUS SIGNET"
+                ) : (
+                  "CONNECT WALLET TO MINT"
                 )}
                 <motion.div 
                   className="absolute -bottom-2 left-0 h-0.5 bg-primary"
@@ -226,6 +234,15 @@ export function MintButtonAlt() {
           />
         </button>
       </motion.div>
+      
+      {/* Mint Modal */}
+      <MintModal
+        isOpen={isMintModalOpen}
+        onClose={() => setIsMintModalOpen(false)}
+        onMint={handleMintWithQuantity}
+        maxPerTransaction={5}
+        price={mintPrice}
+      />
       
       {/* Enhanced progress bar with pulsing effect */}
       <div className="relative mt-3">
