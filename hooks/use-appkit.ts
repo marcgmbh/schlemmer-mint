@@ -16,24 +16,13 @@ export function useAppKit() {
     setIsOpen(true);
     
     if (view === 'Connect' && !isConnected) {
-      // Try to find an injected connector (like MetaMask) and connect to it
-      const injectedConnector = connectors.find(c => c.id === 'injected');
-      
-      if (injectedConnector) {
-        // If we have an injected connector, try to connect to it
-        try {
-          connect({ connector: injectedConnector });
-        } catch (error) {
-          console.error('Failed to connect:', error);
-          // Fallback to alert if connection fails
-          window.alert('Please install MetaMask or another Ethereum wallet to connect.');
-        }
-      } else {
-        // If no injected connector, show message
-        window.alert('No wallet detected. Please install MetaMask or another Ethereum wallet.');
+      // Instead of directly connecting, dispatch a custom event to open the wallet dialog
+      if (typeof window !== 'undefined') {
+        console.log('Dispatching open-wallet-dialog event');
+        window.dispatchEvent(new Event('open-wallet-dialog'));
       }
     }
-  }, [isConnected, connect, connectors]);
+  }, [isConnected]);
   
   const close = useCallback(() => {
     setIsOpen(false);

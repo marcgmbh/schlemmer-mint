@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "./providers";
 import ErrorBoundary from "@/components/error-boundary";
 import { ModalInitializer } from "./modal-initializer";
+import { WalletDialogProvider } from "@/components/wallet-dialog-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -45,6 +46,7 @@ export default function RootLayout({
         <ErrorBoundary>
           <Providers>
             <ModalInitializer />
+            <WalletDialogProvider />
             {children}
             <div id="wallet-dialog-container"></div>
           </Providers>

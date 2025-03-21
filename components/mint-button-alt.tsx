@@ -75,9 +75,17 @@ export function MintButtonAlt() {
     } else {
       // Open the AppKit modal to connect wallet
       try {
+        console.log('Opening wallet connection modal');
         open({ view: 'Connect' });
+        
+        // Also dispatch the event directly as a backup
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('open-wallet-dialog'));
+        }
       } catch (error) {
         console.error('Error opening wallet modal:', error);
+        // Fallback if connection modal fails
+        window.dispatchEvent(new Event('open-wallet-dialog'));
       }
     }
   };
