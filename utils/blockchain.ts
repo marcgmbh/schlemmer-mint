@@ -3,11 +3,44 @@ import { mainnet } from 'wagmi/chains';
 
 // ABI for ERC-721 NFT contract (minimal version for token queries)
 const MINIMAL_ERC721_ABI = [
-  'function balanceOf(address owner) external view returns (uint256)',
-  'function tokenOfOwnerByIndex(address owner, uint256 index) external view returns (uint256)',
-  'function tokenURI(uint256 tokenId) external view returns (string)',
-  'function totalSupply() external view returns (uint256)',
-  'function tokenByIndex(uint256 index) external view returns (uint256)'
+  {
+    name: 'balanceOf',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'owner', type: 'address' }],
+    outputs: [{ name: 'balance', type: 'uint256' }]
+  },
+  {
+    name: 'tokenOfOwnerByIndex',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'owner', type: 'address' }, 
+      { name: 'index', type: 'uint256' }
+    ],
+    outputs: [{ name: 'tokenId', type: 'uint256' }]
+  },
+  {
+    name: 'tokenURI',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [{ name: 'uri', type: 'string' }]
+  },
+  {
+    name: 'totalSupply',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: 'supply', type: 'uint256' }]
+  },
+  {
+    name: 'tokenByIndex',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'index', type: 'uint256' }],
+    outputs: [{ name: 'tokenId', type: 'uint256' }]
+  }
 ];
 
 // Get contract address from environment variable or use a default
@@ -29,13 +62,43 @@ export const publicClient = createPublicClient({
 // Bauhaus ABI with the functions we need
 export const BAUHAUS_ABI = [
   // Read functions
-  'function balanceOf(address owner) external view returns (uint256)',
-  'function publicSaleActive() external view returns (bool)',
-  'function tokenURI(uint256 tokenId) external view returns (string)',
-  'function totalSupply() external view returns (uint256)',
+  {
+    name: 'balanceOf',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'owner', type: 'address' }],
+    outputs: [{ name: 'balance', type: 'uint256' }]
+  },
+  {
+    name: 'publicSaleActive',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: 'active', type: 'bool' }]
+  },
+  {
+    name: 'tokenURI',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'tokenId', type: 'uint256' }],
+    outputs: [{ name: 'uri', type: 'string' }]
+  },
+  {
+    name: 'totalSupply',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: 'supply', type: 'uint256' }]
+  },
   
   // Write functions
-  'function mintPublic(uint256 quantity) external payable',
+  {
+    name: 'mintPublic',
+    type: 'function',
+    stateMutability: 'payable',
+    inputs: [{ name: 'quantity', type: 'uint256' }],
+    outputs: []
+  }
 ];
 
 // Function to get total supply
