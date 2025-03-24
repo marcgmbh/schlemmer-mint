@@ -98,9 +98,16 @@ export function MintModal({
           </div>
           
           <button
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               console.log('Mint Now button clicked with quantity:', quantity);
-              onMint(quantity);
+              // Use a try-catch block to handle potential errors
+              try {
+                onMint(quantity);
+              } catch (error) {
+                console.error("Error calling onMint:", error);
+              }
             }}
             className="w-full py-4 bg-primary text-white font-bold text-lg hover:bg-primary/90 transition-colors rounded"
           >

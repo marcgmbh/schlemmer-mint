@@ -45,7 +45,6 @@ export function WalletModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
     <>
       <div 
         className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50"
-        onClick={onClose}
       />
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md">
         <div className="bg-black/95 border border-white/20 p-6 rounded-lg">

@@ -45,10 +45,10 @@ export function useMint() {
   );
   
   const handleMint = async (quantity: number = 1) => {
-    console.log(`Mint button clicked! Minting ${quantity} NFTs`);
+    console.log(`useMint: Mint initiated for ${quantity} NFTs`);
     
     if (!isConnected) {
-      console.log('Wallet not connected');
+      console.error('Mint error: Wallet not connected');
       setMintError('Please connect your wallet first.');
       throw new Error('Wallet not connected');
     }
@@ -57,36 +57,59 @@ export function useMint() {
       setMintError(null);
       setMintSuccess(false);
       setIsMinting(true);
-      console.log(`Starting mint of ${quantity} NFTs...`);
+      console.log(`Starting mint process for ${quantity} NFTs...`);
       
       // Calculate total price based on quantity
       const totalPriceInEth = (parseFloat(MINT_PRICE) * quantity).toString();
       console.log(`Mint price per NFT: ${MINT_PRICE} ETH`);
       console.log(`Total price for ${quantity} NFTs: ${totalPriceInEth} ETH`);
       
-      // Execute the mint transaction with higher gas limit
-      const hash = await writeContractAsync({
-        address: BAUHAUS_CONTRACT_ADDRESS,
+      // Ensure contract parameters are properly set
+      const mintArgs = {
+        address: BAUHAUS_CONTRACT_ADDRESS as `0x${string}`,
         abi: BAUHAUS_ABI,
         functionName: 'mintPublic',
         args: [BigInt(quantity)], // Mint specified quantity
         value: parseEther(totalPriceInEth),
         gas: BigInt(300000 * quantity), // Adjust gas limit based on quantity
-      });
+      };
       
-      console.log('Mint transaction submitted:', hash);
+      console.log('Submitting mint transaction with params:', JSON.stringify(mintArgs, (_, v) => 
+        typeof v === 'bigint' ? v.toString() : v
+      ));
+      
+      // Execute the mint transaction
+      const hash = await writeContractAsync(mintArgs);
+      
+      console.log('✅ Mint transaction submitted:', hash);
       setMintTxHash(hash);
       
       // Transaction was submitted successfully
       setMintSuccess(true);
       return hash; // Return the transaction hash
     } catch (error) {
-      console.error('Mint error:', error);
-      const errorMessage = error instanceof Error ? error.message : 'There was an error minting. Please try again.';
+      console.error('❌ Mint error details:', error);
+      // More detailed error handling
+      let errorMessage = 'There was an error minting. Please try again.';
+      
+      if (error instanceof Error) {
+        // Check for common error patterns
+        if (error.message.includes('insufficient funds')) {
+          errorMessage = 'Insufficient funds in your wallet to complete this transaction.';
+        } else if (error.message.includes('user rejected')) {
+          errorMessage = 'Transaction rejected. Please try again when ready.';
+        } else if (error.message.includes('gas')) {
+          errorMessage = 'Gas estimation failed. The transaction might fail.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       setMintError(errorMessage);
       setMintSuccess(false);
       throw error; // Re-throw the error to be handled by the caller
     } finally {
+      console.log('Mint process completed (success or error)');
       setIsMinting(false);
     }
   };

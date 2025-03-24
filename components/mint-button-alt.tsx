@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAccount } from 'wagmi';
 import { useMint } from '@/hooks/use-mint';
@@ -16,11 +16,11 @@ export function MintButtonAlt() {
   const [mintedCount, setMintedCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isMintModalOpen, setIsMintModalOpen] = useState(false);
+  const [isMinting, setIsMinting] = useState(false);
   
   const { isConnected } = useAccount();
   const { 
     handleMint,
-    isMinting,
     isSaleActive,
     mintPrice
   } = useMint();
@@ -37,6 +37,20 @@ export function MintButtonAlt() {
     blue: '#1E88E5',
     yellow: '#FDD835',
   };
+  
+  // Auto-open mint modal when wallet gets connected
+  const wasConnectedRef = useRef(false);
+  
+  useEffect(() => {
+    if (isConnected && !wasConnectedRef.current) {
+      console.log('Wallet just connected, opening mint modal automatically');
+      // Give a slight delay to allow wallet modal to close first
+      setTimeout(() => {
+        setIsMintModalOpen(true);
+      }, 800);
+    }
+    wasConnectedRef.current = isConnected;
+  }, [isConnected]);
   
   useEffect(() => {
     // Turn off initial animation after it completes
@@ -108,16 +122,35 @@ export function MintButtonAlt() {
   // Handle minting with quantity
   const handleMintWithQuantity = async (quantity: number) => {
     console.log(`MintButton: Initiating mint of ${quantity} NFTs`);
+    
+    if (!isConnected) {
+      console.error('Cannot mint: wallet not connected');
+      return;
+    }
+    
     try {
-      await handleMint(quantity);
-      console.log('Mint initiated successfully');
+      setIsMinting(true); // Set local minting state
+      console.log('Calling handleMint with quantity:', quantity);
+      
+      // Call the mint function
+      const txHash = await handleMint(quantity);
+      console.log('Mint transaction hash:', txHash);
+      
+      // Success - close the modal after a short delay
+      setTimeout(() => {
+        setIsMintModalOpen(false);
+        console.log('Mint modal closed after successful transaction initiation');
+      }, 500);
+      
     } catch (error) {
       console.error('Error in handleMintWithQuantity:', error);
       // Keep the modal open if there's an error
-      return;
+      alert(`Minting error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      // The mint function will handle its own state, but we'll reset our local one
+      // in case the mint function doesn't update its state properly
+      setTimeout(() => setIsMinting(false), 1000); 
     }
-    // Only close the modal after successful initiation
-    setIsMintModalOpen(false);
   };
   
   return (
